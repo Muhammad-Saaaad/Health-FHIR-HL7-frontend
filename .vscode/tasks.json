@@ -1,0 +1,76 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start EHR",
+      "type": "npm",
+      "script": "dev",
+      "path": "ehr/",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "frontends"
+      }
+    },
+    {
+      "label": "Start Engine",
+      "type": "npm",
+      "script": "dev",
+      "path": "engine/",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "frontends"
+      }
+    },
+    {
+      "label": "Start LIS",
+      "type": "npm",
+      "script": "dev",
+      "path": "lis/",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "frontends"
+      }
+    },
+    {
+      "label": "Start Payer",
+      "type": "npm",
+      "script": "dev",
+      "path": "payer/",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "frontends"
+      }
+    },
+    {
+      "label": "Start PHR",
+      "type": "npm",
+      "script": "dev",
+      "path": "phr/",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "frontends"
+      }
+    },
+    {
+      "label": "Start All Frontends",
+      "dependsOn": [
+        "Start EHR",
+        "Start Engine",
+        "Start LIS",
+        "Start Payer",
+        "Start PHR"
+      ],
+      "problemMatcher": []
+    }
+  ]
+}
