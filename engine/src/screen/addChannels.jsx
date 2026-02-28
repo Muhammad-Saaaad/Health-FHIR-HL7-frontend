@@ -69,6 +69,7 @@ export default function AddChannels() {
     }    
 
     function handleAddChannel() {
+        debugger;
         setData(prev => ({
             ...prev, "rules": {"mappingRules": mappingRules.map(r => ({...r}))} 
         }));
