@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 
-import { get_servers, add_endpoint } from "../api/client";
+import { add_endpoint } from "../api/endpoint";
+import { get_servers } from "../api/server";
 
 import Heading from "../components/heading"
 import Label from "../components/label"

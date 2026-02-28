@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { get_mappings } from "../api/client";
+import { get_mappings } from "../api/channels";
 
 import Heading from "../components/heading";
 import Label from "../components/label";

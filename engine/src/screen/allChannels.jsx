@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { get_all_channels } from "../api/client";
+import { get_all_channels } from "../api/channels";
 import { ChannelsTable } from "../components/table";
 import Heading from "../components/heading";
 import SideBar from "../components/sidebar";

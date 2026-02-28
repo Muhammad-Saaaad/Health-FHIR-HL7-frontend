@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useMutation } from "@tanstack/react-query"
 
-import { add_server } from "../api/client"
+import { add_server } from "../api/server";
 
 import Heading from "../components/heading"
 import Label from "../components/label"

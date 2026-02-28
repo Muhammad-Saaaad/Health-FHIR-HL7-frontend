@@ -1,2 +1,3 @@
 start-all.bat
 stop-all.bat
+.env

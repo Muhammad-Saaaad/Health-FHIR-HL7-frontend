@@ -1,4 +1,9 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom";
+import { useQuery, useMutation } from "@tanstack/react-query";
+
+import { get_servers } from "../api/server";
+import { get_endpoints, get_endpointFields } from '../api/endpoint';
 
 import Heading from "../components/heading"
 import Label from "../components/label"
@@ -6,46 +11,69 @@ import Textbox from "../components/textbox"
 import DropDown, { SearchDropDown } from "../components/dropdown"
 import Button from "../components/button"
 import SideBar from "../components/sidebar"
-
-// Hardcoded source and destination fields
-const SRC_FIELDS = ["MPI", "Name", "Gender", "DOB", "Address", "Phone no"];
-const DEST_FIELDS = ["MPI", "FName", "LName", "Age", "Gender"];
+import Mapping from '../components/mapping';
 
 export default function AddChannels() {
 
+    const navigate = useNavigate();
+    
     const [data, setData] = useState({
         "Channel_name": "",
-        "Src_server_id": 0,
-        "Src_endpoint_id": 0,
-        "dest_server_id": 0,
-        "dest_endpoint_id": 0,
-        "msg_type": ""
+        "src_server_id": '',
+        "src_endpoint_id": '',
+        "dest_server_id": '',
+        "dest_endpoint_id": '',
+        "msg_type": "",
+        "rules": {}
+    });
+    const [mappingRules, setMappingRules] = useState([]); // mapping: [{}, {}, ...]
+
+    const { data: severData, isSuccess: serverIsStatus, isError: serverIsError, error: serverError } = useQuery({
+        queryKey: ["get_servers_for_dropdown"],
+        queryFn: get_servers,
     });
 
-    const [srcChecked, setSrcChecked] = useState([]);   // list of checked src field names
-    const [destChecked, setDestChecked] = useState([]);   // list of checked dest field names
-    const [mappings, setMappings] = useState([]);   // added mapping strings
+    const { data: srcEndpointData, isSuccess: srcEndpointISSuccess } = useQuery({
+        queryKey: ['get_srcEndpoints_for_dropdown', data.src_server_id],
+        queryFn: () => get_endpoints(data.src_server_id),
+        enabled: !!data.src_server_id, // don't run on mount
+    });
 
-    const toggleSrc = (field) =>
-        setSrcChecked(prev => prev.includes(field) ? prev.filter(f => f !== field) : [...prev, field]);
+    const { data: destEndpointData, isSuccess: destEndpointISSuccess } = useQuery({
+        queryKey: ['get_destEndpoints_for_dropdown', data.dest_server_id],
+        queryFn: () => get_endpoints(data.dest_server_id),
+        enabled: !!data.dest_server_id, // don't run on mount
+    });
 
-    const toggleDest = (field) =>
-        setDestChecked(prev => prev.includes(field) ? prev.filter(f => f !== field) : [...prev, field]);
+    const { data: srcFieldData, isSuccess: srcFieldIsSuccess } = useQuery({
+        queryKey: ['get_srcFileds_for_mapping', data.Src_endpoint_id],
+        queryFn: () => get_endpointFields(data.Src_endpoint_id),
+        enabled: !!data.Src_endpoint_id
+    });
+    
+    const { data: destFieldData, isSuccess: destFieldISSuccess, } = useQuery({
+        queryKey: ['get_destFileds_for_mapping', data.dest_endpoint_id],
+        queryFn: () => get_endpointFields(data.dest_endpoint_id),
+        enabled: !!data.dest_endpoint_id
+    });
 
-    const addMapping = () => {
-        if (srcChecked.length === 0 || destChecked.length === 0) return;
-        const src = srcChecked.join(" + ");
-        const dest = destChecked.join(" + ");
-        const line = `${src} → ${dest}`;
-        if (!mappings.includes(line)) {
-            setMappings(prev => [...prev, line]);
-        }
-        setSrcChecked([]);
-        setDestChecked([]);
-    };
+    // As sson as server is assign an id, hit the api to get the endpoints for that seever.
+    function onSelectSrcServer(server_id) {
+        setData(prev => ({ ...prev, "src_server_id": server_id}));
+        // here the query will automatically run because of the enabled condition
+        // we set for srcEndpoint query, so no need to manually refetch.
+    }
+    
+    function onSelectDestServer(server_id) {  
+        setData(prev => ({ ...prev, "dest_server_id": server_id }));
+    }    
 
-    const removeMapping = (line) =>
-        setMappings(prev => prev.filter(m => m !== line));
+    function handleAddChannel() {
+        setData(prev => ({
+            ...prev, "rules": {"mappingRules": mappingRules.map(r => ({...r}))} 
+        }));
+        console.log("Final data to submit: ", data);
+    }
 
     return (
         <div className="flex overflow-hidden h-screen">
@@ -56,28 +84,65 @@ export default function AddChannels() {
 
                 <Label text="Channel Name" />
                 <br />
-                <Textbox placeholder="Enter Channel Name" onChange={(e) => setData({ ...data, "Channel_name": e.target.value })} />
+                <Textbox 
+                    placeholder="Enter Channel Name" 
+                    onChange={(e) => setData({ ...data, "Channel_name": e.target.value })} 
+                />
                 <br />
 
                 <Label text="Source Server" />
-                <br />
-                <DropDown keys={["1"]} values={["ehr"]} defaultValue="Select Source Server" onSelect={(src_server_id) => setData({ ...data, "Src_server_id": src_server_id })} />
+                <br /> {/* Integrate API */}
+                <DropDown 
+                    keys={serverIsStatus ? severData.data?.filter(s=> s.server_id !== data.dest_server_id).map(s => s.server_id): ['']} 
+                    values={serverIsStatus ? severData.data?.filter(s=> s.server_id !== data.dest_server_id).map(s=> s.name): ['']} 
+                    defaultValue="Select Source Server" 
+                    onSelect={(key) => onSelectSrcServer(key)} 
+                />
+                {
+                    serverIsError && <p className="text-red-500 font-semibold">{serverError}</p>
+                }
                 <br /><br />
 
                 <Label text="Source EndPoint" />
-                <br />
-                <DropDown keys={["1"]} values={["/ehr/register-patient"]} defaultValue="Select Source Endpoint" onSelect={(Src_endpoint_id) => setData({ ...data, "Src_endpoint_id": Src_endpoint_id })} />
+                <br /> {/* Integrate API */}
+                <DropDown 
+                    keys={srcEndpointISSuccess ? srcEndpointData.data?.map(ep=> ep.endpoint_id) : ['']} 
+                    values={srcEndpointISSuccess ? srcEndpointData.data?.map(ep=> ep.url) : ['']} 
+                    defaultValue="Select Source Endpoint" 
+                    onSelect={(Src_endpoint_id) => setData({ ...data, "Src_endpoint_id": Src_endpoint_id })} 
+                />
                 <br /><br />
 
                 <Label text="Destination Server" />
-                <br />
-                <DropDown keys={["1"]} values={["lis"]} defaultValue="Select Destination Server" onSelect={(dest_server_id) => setData({ ...data, "dest_server_id": dest_server_id })} />
+                <br /> {/* Integrate API */}
+                <DropDown 
+                    keys={serverIsStatus ? severData.data?.filter(s=> s.server_id !== data.src_server_id).map(s=> s.server_id): ['']} 
+                    values={serverIsStatus ? severData.data?.filter(s=> s.server_id !== data.src_server_id).map(s=> s.name): ['']} 
+                    defaultValue="Select Destination Server" 
+                    onSelect={(dest_server_id) => onSelectDestServer(dest_server_id)} 
+                />
+                {
+                    serverIsError && <p className="text-red-500 font-semibold">{serverError}</p>    
+                }
                 <br /><br />
 
                 <Label text="Destination EndPoint" />
-                <br />
-                <DropDown keys={["1"]} values={["/lis/register-patient"]} defaultValue="Select Destination Endpoint" onSelect={(dest_endpoint_id) => setData({ ...data, "dest_endpoint_id": dest_endpoint_id })} />
+                <br /> {/* Integrate API */}
+                <DropDown 
+                    keys={destEndpointISSuccess ? destEndpointData.data?.map(ep=> ep.endpoint_id) : ['']} 
+                    values={destEndpointISSuccess ? destEndpointData.data?.map(ep=> ep.url) : ['']} 
+                    defaultValue="Select Destination Endpoint" 
+                    onSelect={(dest_endpoint_id) => setData({ ...data, "dest_endpoint_id": dest_endpoint_id })} 
+                />
                 <br /><br />
+
+                <Mapping 
+                    srcFieldIsSuccess={srcFieldIsSuccess} 
+                    srcFieldData={srcFieldData} 
+                    destFieldISSuccess={destFieldISSuccess} 
+                    destFieldData={destFieldData} 
+                    takeData={(mappingData) => setMappingRules(prev => ([ ...prev, mappingData ]))}
+                />
 
                 <SearchDropDown
                     options={["ADT", "ORM", "ORU", "DFT"]}
@@ -86,86 +151,12 @@ export default function AddChannels() {
                 />
                 <br /><br />
 
-                {/* ── Mapping ── */}
-                <div className="border-2 border-[#31486F] rounded-2xl overflow-hidden">
-                    {/* Header */}
-                    <div className="bg-white text-center font-bold text-[#31486F] py-2 border-b-2 border-[#31486F]">
-                        Mapping
-                    </div>
-
-                    {/* Two-column table */}
-                    <div className="grid grid-cols-2 divide-x-2 divide-[#31486F]">
-                        {/* Source column */}
-                        <div className="p-3">
-                            <p className="font-bold text-sm mb-2">Patient</p>
-                            {SRC_FIELDS.map(field => (
-                                <label key={field} className="flex items-center gap-2 mb-1 cursor-pointer select-none">
-                                    <input
-                                        type="checkbox"
-                                        className="w-4 h-4 accent-[#31486F]"
-                                        checked={srcChecked.includes(field)}
-                                        onChange={() => toggleSrc(field)}
-                                    />
-                                    <span className={`text-sm ${srcChecked.includes(field) ? "line-through text-gray-400" : "text-gray-700"}`}>
-                                        {field}
-                                    </span>
-                                </label>
-                            ))}
-                        </div>
-
-                        {/* Destination column */}
-                        <div className="p-3">
-                            <p className="font-bold text-sm mb-2">PID</p>
-                            {DEST_FIELDS.map(field => (
-                                <label key={field} className="flex items-center gap-2 mb-1 cursor-pointer select-none">
-                                    <input
-                                        type="checkbox"
-                                        className="w-4 h-4 accent-[#31486F]"
-                                        checked={destChecked.includes(field)}
-                                        onChange={() => toggleDest(field)}
-                                    />
-                                    <span className={`text-sm ${destChecked.includes(field) ? "line-through text-gray-400" : "text-gray-700"}`}>
-                                        {field}
-                                    </span>
-                                </label>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Add Mapping button */}
-                <div className="flex justify-center mt-4">
-                    <button
-                        type="button"
-                        onClick={addMapping}
-                        className="bg-[#31486F] hover:bg-[#1e3352] active:bg-[#152740] text-white font-semibold px-8 py-2 rounded-full transition-colors"
-                    >
-                        Add Mapping
-                    </button>
-                </div>
-
-                {/* Added mappings list */}
-                {mappings.length > 0 && (
-                    <div className="mt-4 flex flex-col gap-2">
-                        {mappings.map((line, i) => (
-                            <div key={i} className="flex items-center justify-between border-2 border-[#E8F3F1] rounded-2xl px-4 py-2">
-                                <span className="text-sm text-gray-600">{line}</span>
-                                <button
-                                    type="button"
-                                    onClick={() => removeMapping(line)}
-                                    className="bg-[#31486F] hover:bg-[#1e3352] text-white text-sm font-semibold px-4 py-1 rounded-full transition-colors"
-                                >
-                                    Remove
-                                </button>
-                            </div>
-                        ))}
-                    </div>
-                )}
-
-                <br /><br />
-
                 <div className="flex justify-center items-center">
-                    <Button text="Add Channel" />
+                    <Button 
+                        className="w-50 font-semibold" 
+                        text="Add Channel"
+                        onClickfunction={() => handleAddChannel()}
+                    />
                 </div>
 
             </main>

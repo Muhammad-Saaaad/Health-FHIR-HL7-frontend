@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { get_servers } from "../api/client"
+import { get_servers } from "../api/server"
 
 import Heading, { LowerHeading } from "../components/heading"
 import Button from "../components/button"
@@ -15,6 +15,10 @@ export default function Dashboard() {
         queryKey: ["dashboard_get_servers"],
         queryFn: get_servers,
     });
+
+    console.log("is Loading -> ", isLoading);
+    console.log("is Error -> ", isError);
+    console.log("error -> ",error);
 
     const total_servers_connected = data?.data.length;
 
