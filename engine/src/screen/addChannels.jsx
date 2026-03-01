@@ -18,15 +18,25 @@ export default function AddChannels() {
     const navigate = useNavigate();
     
     const [data, setData] = useState({
-        "Channel_name": "",
+        "name": "",
         "src_server_id": '',
         "src_endpoint_id": '',
         "dest_server_id": '',
         "dest_endpoint_id": '',
         "msg_type": "",
-        "rules": {}
     });
     const [mappingRules, setMappingRules] = useState([]); // mapping: [{}, {}, ...]
+
+    function arraysEqual(a, b) { // check if 2 array's are equal or not.
+        if (a === b) return true; // Check if they are the exact same reference
+        if (a == null || b == null) return false;
+        if (a.length !== b.length) return false;
+
+        for (let i = 0; i < a.length; ++i) {
+            if (a[i] !== b[i]) return false;
+        }
+        return true;
+    }
 
     const { data: severData, isSuccess: serverIsStatus, isError: serverIsError, error: serverError } = useQuery({
         queryKey: ["get_servers_for_dropdown"],
@@ -46,9 +56,9 @@ export default function AddChannels() {
     });
 
     const { data: srcFieldData, isSuccess: srcFieldIsSuccess } = useQuery({
-        queryKey: ['get_srcFileds_for_mapping', data.Src_endpoint_id],
-        queryFn: () => get_endpointFields(data.Src_endpoint_id),
-        enabled: !!data.Src_endpoint_id
+        queryKey: ['get_srcFileds_for_mapping', data.src_endpoint_id],
+        queryFn: () => get_endpointFields(data.src_endpoint_id),
+        enabled: !!data.src_endpoint_id
     });
     
     const { data: destFieldData, isSuccess: destFieldISSuccess, } = useQuery({
@@ -69,11 +79,12 @@ export default function AddChannels() {
     }    
 
     function handleAddChannel() {
-        debugger;
-        setData(prev => ({
-            ...prev, "rules": {"mappingRules": mappingRules.map(r => ({...r}))} 
-        }));
-        console.log("Final data to submit: ", data);
+        // debugger;
+        const finalData = {
+            ...data,
+            'rules': {"mapping_rules": mappingRules}
+        }
+        console.log("Final data to submit: ", finalData);
     }
 
     return (
@@ -87,7 +98,7 @@ export default function AddChannels() {
                 <br />
                 <Textbox 
                     placeholder="Enter Channel Name" 
-                    onChange={(e) => setData({ ...data, "Channel_name": e.target.value })} 
+                    onChange={(e) => setData({ ...data, "name": e.target.value })} 
                 />
                 <br />
 
@@ -110,7 +121,7 @@ export default function AddChannels() {
                     keys={srcEndpointISSuccess ? srcEndpointData.data?.map(ep=> ep.endpoint_id) : ['']} 
                     values={srcEndpointISSuccess ? srcEndpointData.data?.map(ep=> ep.url) : ['']} 
                     defaultValue="Select Source Endpoint" 
-                    onSelect={(Src_endpoint_id) => setData({ ...data, "Src_endpoint_id": Src_endpoint_id })} 
+                    onSelect={(src_endpoint_id) => setData({ ...data, "src_endpoint_id": src_endpoint_id })} 
                 />
                 <br /><br />
 
@@ -137,12 +148,23 @@ export default function AddChannels() {
                 />
                 <br /><br />
 
-                <Mapping 
-                    srcFieldIsSuccess={srcFieldIsSuccess} 
-                    srcFieldData={srcFieldData} 
+                <Mapping // 
+                    srcFieldIsSuccess={srcFieldIsSuccess} // we give this so that the fields can be display on the table.
+                    srcFieldData={srcFieldData} // the field data to be displayed on the mapping table.
                     destFieldISSuccess={destFieldISSuccess} 
                     destFieldData={destFieldData} 
+                    
+                    // Triggered when "add mapping" button is clicked
                     takeData={(mappingData) => setMappingRules(prev => ([ ...prev, mappingData ]))}
+
+                    // Triggered when you want to remove a mapping line.
+                    removeData={(line) => 
+                        setMappingRules(prev => {
+                            return prev.filter(m => // Remove all the mappings that have the same src_paths and dest_paths as the line to be removed.
+                                !(arraysEqual(m.src_paths, line.src_paths) && arraysEqual(m.dest_paths, line.dest_paths))
+                            );
+                        }
+                    )}
                 />
 
                 <SearchDropDown

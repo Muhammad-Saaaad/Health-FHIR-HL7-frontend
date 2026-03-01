@@ -3,7 +3,7 @@ import { useState } from "react"
 import Button from "./button";
 import MappingColumns from "./mappingColumns"
 
-export default function Mapping({srcFieldIsSuccess, srcFieldData, destFieldISSuccess, destFieldData, takeData}) {
+export default function Mapping({srcFieldIsSuccess, srcFieldData, destFieldISSuccess, destFieldData, takeData, removeData}) {
 
     const [srcChecked, setSrcChecked] = useState([]);   // list of checked src field names
     const [destChecked, setDestChecked] = useState([]);   // list of checked dest field names
@@ -24,12 +24,17 @@ export default function Mapping({srcFieldIsSuccess, srcFieldData, destFieldISSuc
         if (srcChecked.length > 1 && destChecked.length > 1) 
             return alert("Please select only one source or one destination field to create mapping.");
 
-        const src = srcChecked.map(field => field.name).join(" + ");
-        const dest = destChecked.map(field => field.name).join(" + ");
+        const front_src = srcChecked.map(field => field.name).join(" + ");
+        const front_dest = destChecked.map(field => field.name).join(" + ");
+        const back_src = srcChecked.map(field => field.endpoint_filed_id).join(" + ");
+        const back_dest = destChecked.map(field => field.endpoint_filed_id).join(" + ");
 
-        const line = `${src} → ${dest}`;
-        if (!mappings.includes(line)) {
-            setMappings(prev => [...prev, line]);
+        const frontLine = `${front_src} → ${front_dest}`;
+        const backLine = `${back_src} → ${back_dest}`;
+        if (!mappings.some(m => m.frontLine === frontLine)) {
+            setMappings(prev => [...prev, {"frontLine": frontLine, "backLine": backLine}]);
+
+            // debugger;
 
             let transform = "copy";
             let config = {};
@@ -42,7 +47,7 @@ export default function Mapping({srcFieldIsSuccess, srcFieldData, destFieldISSuc
                 config = { "delimiter": " "}; // for example, we can use space to split the source field into multiple destination fields.
             }
 
-            takeData(
+            takeData( // pass the selected fields and transformation config to parent component, so that it can be included in the final data to submit.
                 {
                     "src_paths": srcChecked.map(field => field.endpoint_filed_id),
                     "dest_paths": destChecked.map(field => field.endpoint_filed_id),
@@ -56,7 +61,20 @@ export default function Mapping({srcFieldIsSuccess, srcFieldData, destFieldISSuc
         setDestChecked([]);
     };
 
-    const removeMapping = (line) => setMappings(prev => prev.filter(m => m !== line));
+    const removeMapping = (line) => {
+        setMappings(prev => prev.filter(m => {
+            // debugger;
+            let output =  m.frontLine !== line.frontLine;
+            return output;
+        }));
+
+        // Here you get paths as string arrays and you convert into into Int using Number datatype.
+        // {"backLine": "src1_id + src2_id → dest1_id + dest2_id"}
+        let src_paths = line.backLine.split(" → ")[0].split(" + ").map(Number);
+        let dest_paths = line.backLine.split(" → ")[1].split(" + ").map(Number);
+                
+        removeData({"src_paths": src_paths, "dest_paths": dest_paths});
+    };
 
     return (
         <div className="p-0 m-0">
@@ -70,6 +88,14 @@ export default function Mapping({srcFieldIsSuccess, srcFieldData, destFieldISSuc
                 {/* The divide is applied to the parent container, but it applies the border to child containers.*/}
                 {/* The divide only applies border to the center childs not first or last child.*/}
                 <div className="grid grid-cols-2 divide-x-2 divide-[#31486F]">
+                    {/* Headings */}
+                    <div className="flex justify-center items-center border-b-2 border-[#31486F]">
+                        <p className="font-bold text-sm mb-2">Source Fields</p>
+                    </div>
+                    <div className="flex justify-center items-center border-b-2 border-r-0 border-[#31486F]">
+                        <p className="font-bold text-sm mb-2">Destination Fields</p>
+                    </div>
+
                     {/* Source column */}
                     <MappingColumns 
                         FIELDS={srcFieldIsSuccess ? srcFieldData.data : []} 
@@ -100,7 +126,7 @@ export default function Mapping({srcFieldIsSuccess, srcFieldData, destFieldISSuc
                 <div className="mt-4 flex flex-col gap-2">
                     {mappings.map((line, i) => (
                         <div key={i} className="flex items-center justify-between border-2 border-[#E8F3F1] rounded-2xl px-4 py-2">
-                            <span className="text-sm text-gray-600 font-semibold">{line}</span>
+                            <span className="text-sm text-gray-600 font-semibold">{line.frontLine}</span>
                             <button
                                 type="button"
                                 onClick={() => removeMapping(line)}

@@ -1,7 +1,7 @@
 export default function MappingColumns({FIELDS, checked, toggle }) {
 
     let fontendData = {} // {"patient": [ {endpoint_filed_id, path, name}, ...], "coverage": [...]}
-    FIELDS?.map(element => {
+    FIELDS?.forEach(element => {
         if (!fontendData[element.resource]) {
             fontendData[element.resource] = []
         }
