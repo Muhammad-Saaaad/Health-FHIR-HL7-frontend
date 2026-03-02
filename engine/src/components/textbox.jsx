@@ -1,7 +1,8 @@
 import { twMerge } from "tailwind-merge";
 
 const Textbox = (props) => {
-    // if readOnly is set to true then we don't provide onChnage
+    // if readOnly is set to true then we don't provide onChnage.
+    // We provide value in case of, readOnly, where it will just show the value.
     let { placeholder, value, className, onChange, readOnly } = props;
     
     if (!readOnly){

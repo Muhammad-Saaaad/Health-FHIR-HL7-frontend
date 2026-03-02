@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://192.168.18.99:8003"
+const API_URL = "http://localhost:8003"
 const header = { "content-Type": "application/json" }
 
 export async function get_patients() {

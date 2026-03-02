@@ -15,3 +15,15 @@ export const add_channel = async (data) => {
     const response = await api.post(`/route/add-route`, data);
     return response;
 };
+
+export const rule_validation = {
+    mpi: {"dest": ["mpi"], "type": "copy", "config": {} },
+
+    gender: {"dest": ["gender"], "type": "map", "config": {"Male": "M", "Female": "F"}},
+
+    "birth date": {"dest": ["birth date"], "type": "format", "config": {"from": "%Y-%m-%d", "to": "%Y%m%d"}},
+
+    fullname: {"dest": ["family name", "given name"], "type": "split", "config": {delimiter: " "}},
+
+    "phone number": {"dest": ["phone number"], "type": "copy", "config": {}},
+}

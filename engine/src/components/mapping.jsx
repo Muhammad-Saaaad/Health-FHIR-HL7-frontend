@@ -2,6 +2,7 @@ import { useState } from "react"
 
 import Button from "./button";
 import MappingColumns from "./mappingColumns"
+import { rule_validation } from '../api/channels'; // just a json variable
 
 export default function Mapping({srcFieldIsSuccess, srcFieldData, destFieldISSuccess, destFieldData, takeData, removeData}) {
 
@@ -21,8 +22,34 @@ export default function Mapping({srcFieldIsSuccess, srcFieldData, destFieldISSuc
     const addMapping = () => {
         if (srcChecked.length === 0 || destChecked.length === 0) 
             return;
-        if (srcChecked.length > 1 && destChecked.length > 1) 
+        if (srcChecked.length > 1 && destChecked.length > 1) {
             return alert("Please select only one source or one destination field to create mapping.");
+        }
+
+        let is_valid_mapping = true;
+        srcChecked?.forEach(src_element => {
+            // debugger;
+            if (rule_validation[src_element.name]){
+
+                let dest_value = rule_validation[src_element.name]; // give the destination list, type and config.
+                destChecked?.forEach(dest_element => {
+                    if (!dest_value.dest.includes(dest_element.name)){
+                        alert(`You cannot map ${src_element.name} to ${dest_element.name}`);
+                        is_valid_mapping = false;
+                        return false;
+                    }
+                });
+            }
+            else{
+                alert(`${src_element.name} is not present in the validation list.`);
+                is_valid_mapping = false;
+                return false;
+            }
+        });
+
+        if (!is_valid_mapping){
+            return;
+        }
 
         const front_src = srcChecked.map(field => field.name).join(" + ");
         const front_dest = destChecked.map(field => field.name).join(" + ");
@@ -34,18 +61,13 @@ export default function Mapping({srcFieldIsSuccess, srcFieldData, destFieldISSuc
         if (!mappings.some(m => m.frontLine === frontLine)) {
             setMappings(prev => [...prev, {"frontLine": frontLine, "backLine": backLine}]);
 
-            // debugger;
-
-            let transform = "copy";
-            let config = {};
-            if (srcChecked.length > 1){
-                transform = "concat";
-                config = { "delimiter": " "}; // for example, we can use space to concat multiple source fields.
-            }
-            else if (destChecked.length > 1){
-                transform = "split";
-                config = { "delimiter": " "}; // for example, we can use space to split the source field into multiple destination fields.
-            }
+            // we can just take the first one because if there are multiple source fields, 
+            // then the transformation will be concat and and it will be same for mutliple source fields.,
+            // Similarly if there are multiple destination fields, then the transformation will be split
+            // but again the transform type and the config will be a only 1.
+            let dest_value = rule_validation[srcChecked[0].name]; 
+            let transform = dest_value.type;
+            let config = dest_value.config;
 
             takeData( // pass the selected fields and transformation config to parent component, so that it can be included in the final data to submit.
                 {
@@ -72,7 +94,7 @@ export default function Mapping({srcFieldIsSuccess, srcFieldData, destFieldISSuc
         // {"backLine": "src1_id + src2_id → dest1_id + dest2_id"}
         let src_paths = line.backLine.split(" → ")[0].split(" + ").map(Number);
         let dest_paths = line.backLine.split(" → ")[1].split(" + ").map(Number);
-                
+
         removeData({"src_paths": src_paths, "dest_paths": dest_paths});
     };
 

@@ -23,22 +23,28 @@ export default function AddCustomer() {
         setForm(prev => ({ ...prev, [field]: value }));
     };
 
-    const { mutate, isPending, isError, error } = useMutation({
+    const { mutate, isPending} = useMutation({
         mutationFn: reg_patients,
-        onSuccess: (res) => {
+        onSuccess: () => {
             alert(`Customer registered successfully!`);
         },
+        onError: (err) => {
+            alert("Error registering customer: " + (err?.response?.data?.detail || err.message || "Unknown error"));
+        }
     });
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        mutate({
+        let input_data = {
             name: form.name,
-            dob: form.dob,
-            phone_no: form.phone || undefined,
-            gender: form.gender || undefined,
-            plan_type: form.plan_type || undefined,
-        });
+            phone_no: form.phone,
+            gender: form.gender,
+            date_of_birth: form.dob,
+            user_id: 1,
+            insurance_type: form.plan_type,
+        }
+        mutate(input_data);
+        console.log("Input data to submit: ", input_data);
     };
 
     return (
@@ -54,7 +60,6 @@ export default function AddCustomer() {
                     <div className="col-span-2 flex justify-center items-center">
                         <Textbox
                             placeholder="Enter your name"
-                            value={form.name}
                             onChange={(e) => handleChange("name", e.target.value)}
                         />
                     </div>
@@ -65,7 +70,6 @@ export default function AddCustomer() {
                     <div className="col-span-2 flex justify-center items-center md:justify-end lg:justify-start">
                         <DateTextBox
                             placeholder="Enter your DOB"
-                            selected={form.dob}
                             onChange={(date) => handleChange("dob", date)}
                         />
                     </div>
@@ -105,12 +109,6 @@ export default function AddCustomer() {
                 </div>
 
                 <br /><br />
-
-                {isError && (
-                    <p className="text-center text-red-500 mb-4">
-                        {error?.response?.data?.detail || error?.message || "Submission failed"}
-                    </p>
-                )}
 
                 <div className="flex justify-center space-x-10 md:space-x-20 lg:space-x-40">
                     <Button className="w-40 bg-gray-200 text-[#202020]" text="Cancel" type="button" />

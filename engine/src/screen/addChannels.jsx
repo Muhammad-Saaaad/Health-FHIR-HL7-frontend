@@ -4,6 +4,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 
 import { get_servers } from "../api/server";
 import { get_endpoints, get_endpointFields } from '../api/endpoint';
+import { add_channel } from "../api/channels";
 
 import Heading from "../components/heading"
 import Label from "../components/label"
@@ -37,6 +38,12 @@ export default function AddChannels() {
         }
         return true;
     }
+
+    const {mutate, isPending} = useMutation({
+        mutationFn: (data) => add_channel(data),
+        onSuccess: () => {alert("Channel added successfully!"); navigate("/channels")},
+        onError: (err) => alert("Error adding channel: " + err.message)
+    })
 
     const { data: severData, isSuccess: serverIsStatus, isError: serverIsError, error: serverError } = useQuery({
         queryKey: ["get_servers_for_dropdown"],
@@ -82,9 +89,11 @@ export default function AddChannels() {
         // debugger;
         const finalData = {
             ...data,
-            'rules': {"mapping_rules": mappingRules}
+            'rules': {"mappings": mappingRules}
         }
         console.log("Final data to submit: ", finalData);
+
+        mutate(finalData);
     }
 
     return (
@@ -176,8 +185,8 @@ export default function AddChannels() {
 
                 <div className="flex justify-center items-center">
                     <Button 
-                        className="w-50 font-semibold" 
-                        text="Add Channel"
+                        className={`w-50 font-semibold ${isPending ? "cursor-not-allowed opacity-50 w-70" : ""}`}
+                        text={isPending ? "Adding Channel..." : "Add Channel"}
                         onClickfunction={() => handleAddChannel()}
                     />
                 </div>
