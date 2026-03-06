@@ -15,7 +15,7 @@ export default function Sidebar() {
     }, []);
 
     const menuItems = [
-        { icon: Home, label: 'Home', path: '/', other_paths: ['/add-server', '/server-details']},
+        { icon: Home, label: 'Dashboard', path: '/dashboard', other_paths: ['/add-server', '/server-details']},
         { icon: BatteryCharging, label: 'Add EndPoint', path: '/add-endpoint', other_paths: []},
         { icon: Route, label: 'Channels', path: '/all-channels', other_paths: ['/add-channels', '/channel-details']},
         { icon: ScrollText, label: 'Logs', path: '/logs', other_paths: []},
@@ -77,7 +77,7 @@ export default function Sidebar() {
                     </button>
                     {isOpen && (
                         <h1 className="text-xl font-bold text-[#31486F] whitespace-nowrap overflow-hidden">
-                            Health Care
+                            Engine
                         </h1>
                     )}
                 </div>

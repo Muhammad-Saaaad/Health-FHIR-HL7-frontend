@@ -37,7 +37,11 @@ export const DateTextBox =({placeholder, onChange}) =>{
             <DatePicker 
                 ref={inputRef}
                 selected={date}
-                onChange={(date) => {setDate(date); onChange(date); inputRef.current.input.blur();}}
+                onChange={(date) => {
+                    setDate(date);
+                    const formattedDate = date.toISOString().split("T")[0]; // "2026-03-02"
+                    onChange(formattedDate); // pass formatted date to parent
+                }}
                 placeholderText={placeholder}
                 dateFormat="dd/MM/yyyy"
                 onFocus={(e) => e.target.blur()}

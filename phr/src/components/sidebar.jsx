@@ -15,7 +15,7 @@ export default function Sidebar() {
     }, []);
 
     const menuItems = [
-        { icon: Home, label: 'Home', path: '/'},
+        { icon: Home, label: 'Home', path: '/home'},
         { icon: User, label: 'Profile', path: '/profile'},
     ];
 

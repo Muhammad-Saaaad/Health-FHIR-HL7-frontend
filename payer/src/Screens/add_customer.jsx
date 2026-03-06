@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { reg_patients } from "../api/client";
+import { reg_patients } from "../api/patient";
 
 import Sidebar from "../components/sidebar";
 import { LowerHeading } from "../components/heading"

@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 
 export default function SignUp() {
 
-    const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPass, setShowPass] = useState(false);
@@ -19,24 +18,11 @@ export default function SignUp() {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
-            <div className="bg-white rounded-3xl shadow-sm px-8 py-12 w-full max-w-sm">
+            <div className="bg-white rounded-3xl shadow-sm px-8 py-12 w-full max-w-sm shadow-black/40">
 
                 <h1 className="text-2xl font-bold text-center text-[#152F5B] mb-8">Sign Up</h1>
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-
-                    {/* Name */}
-                    <div className="flex items-center gap-3 border-2 border-[#E8F3F1] rounded-2xl px-4 py-3">
-                        <User size={18} className="text-gray-400 shrink-0" />
-                        <input
-                            type="text"
-                            placeholder="Enter your name"
-                            className="flex-1 outline-none text-sm text-gray-700 placeholder-gray-400"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            required
-                        />
-                    </div>
 
                     {/* Email */}
                     <div className="flex items-center gap-3 border-2 border-[#E8F3F1] rounded-2xl px-4 py-3">

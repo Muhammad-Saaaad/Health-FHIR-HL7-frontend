@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { get_patients } from "../api/client"
+import { get_patients } from "../api/patient"
 import Textbox from "../components/textbox";
 import Heading from "../components/heading";
 import Sidebar from "../components/sidebar";

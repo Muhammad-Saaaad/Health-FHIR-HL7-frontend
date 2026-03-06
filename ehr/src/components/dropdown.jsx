@@ -10,11 +10,11 @@ const DropDown = (props) => {
     }
     
     return <select 
-    className="border-2 border-[#E8F3F1] rounded-2xl w-full h-12 p-2 pr-8"
-    onChange={changeValue}
-    defaultValue={defaultValue}
+        className="border-2 border-[#E8F3F1] rounded-2xl w-full h-12 p-2 pr-8"
+        onChange={changeValue}
+        defaultValue={defaultValue}
     >
-        <option value="" disabled>{defaultValue}</option>
+        <option value="">{defaultValue}</option>
 
         {options.map((element, index) => (
             <option key={index} value={element}>{element}</option>

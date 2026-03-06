@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useMutation } from "@tanstack/react-query"
-import { reg_patient } from "../api/client"
+import { reg_patient } from "../api/patient"
 
 import Heading from "../components/heading"
 import Label from "../components/label"
@@ -12,37 +12,63 @@ import Sidebar from "../components/sidebar"
 function AddPatient() {
 
     const [patient, setPatient] = useState({
+        nic: "",
         name: "",
-        DOB: "",
-        Gender: "",
-        NIC: "",
-        "Phone no": "",
-        Address: "",
-        "Insurance Company": "",
-        "Policy Number": "",
-        "Plane Type": ""
+        phone_no: "",
+        gender: "",
+        date_of_birth: "",
+        address: "",
+        insurance_company: "",
+        policy_number: "",
+        plan_type: ""
     });
 
     const handleChange = (field, value) => {
+        console.log(`Updating field ${field} to value ${value}`);
         setPatient(prev => ({ ...prev, [field]: value }));
     };
 
-    const { mutate, isPending, isError, error } = useMutation({
+    const { mutate, isPending } = useMutation({
         mutationFn: reg_patient,
-        onSuccess: (res) => {
-            alert(`Patient registered! ID: ${res.data.p_id}`);
+        onSuccess: () => {
+            alert("Patient registered successfully!");
         },
+        onError: (err) => {
+            const detail = err?.response?.data?.detail;
+            const status = err?.response?.status;
+    
+            let message;
+            // Sometimes FastAPI returns details as an array, and sometimes it returns it as a string,
+            // so we need to handle both cases. 
+            if (Array.isArray(detail)) {
+                // if an array we loop through each error, where the location of the error is in loc[1],
+                //  and the error message is in msg, and we join them with a new line.
+                message = detail.map(e => `${e.loc[1]}: ${e.msg}`).join("\n");
+            } else {
+                message = detail || err?.message || "Unknown error";
+            }
+            
+            alert(`Failed to register patient: ${message} (Status: ${status})`);
+        }
     });
 
     const SubmitEvent = (e) => {
         e.preventDefault();
-        mutate({
-            name: patient.name,
-            cnic: patient.NIC,
-            phone_no: patient["Phone no"] || undefined,
-            gender: patient.Gender || undefined,
-            date_of_birth: patient.DOB || undefined,
-        });
+        console.log(patient);
+
+        const requiredFields = ["name", "nic", "gender", "date_of_birth", "policy_number", "insurance_company", "plan_type"];
+        for (const field of requiredFields) {
+            if (patient[field] === "") {
+                alert(`${field} is a required field.`);
+                return;
+            }
+        }
+
+        const payload = {...patient, 
+            "phone_no": patient["phone_no"].trim() === "" ? null : patient["phone_no"],
+            "address": patient.address.trim() === "" ? null : patient.address
+        };
+        mutate(payload);
     }
 
     return <div className="flex overflow-hidden">
@@ -58,25 +84,29 @@ function AddPatient() {
                     placeholder="Enter your Name"
                     value={patient.name}
                     onChange={(e) => handleChange("name", e.target.value)}
+                    // className="border-red-500"
                 />
                 <br /><br />
 
                 <Label>Date of Birth</Label>
                 <br />
-                <Textbox
-                    type="date"
-                    value={patient.DOB}
-                    onChange={(e) => handleChange("DOB", e.target.value)}
+                <DateTextBox 
+                    placeholder="Enter date of birth" 
+                    onChange={(date) => {
+                        // only get the date, then formate it to yyyy-mm-dd
+                        const formattedDate = date.toLocaleDateString().split('/').reverse().join('-');
+                        handleChange("date_of_birth", formattedDate);
+                    }}
                 />
                 {/* <DateTextBox placeholder="Enter date of birth" /> */}
-                <br /><br />
+                <br />
 
                 <Label>Gender</Label>
                 <br />
                 <DropDown
                     defaultValue="Select Gender"
                     options={["Male", "Female"]}
-                    onSelect={(val) => handleChange("Gender", val)}
+                    onSelect={(val) => handleChange("gender", val)}
                 />
                 <br /><br />
 
@@ -84,8 +114,8 @@ function AddPatient() {
                 <br />
                 <Textbox
                     placeholder="Enter your NIC"
-                    value={patient.NIC}
-                    onChange={(e) => handleChange("NIC", e.target.value)}
+                    value={patient.nic}
+                    onChange={(e) => handleChange("nic", e.target.value)}
                 />
                 <br /><br />
 
@@ -93,8 +123,8 @@ function AddPatient() {
                 <br />
                 <Textbox
                     placeholder="Enter your Phone no"
-                    value={patient["Phone no"]}
-                    onChange={(e) => handleChange("Phone no", e.target.value)}
+                    value={patient["phone_no"]}
+                    onChange={(e) => handleChange("phone_no", e.target.value)}
                 />
                 <br /><br />
 
@@ -102,8 +132,8 @@ function AddPatient() {
                 <br />
                 <Textbox
                     placeholder="Enter your Address"
-                    value={patient.Address}
-                    onChange={(e) => handleChange("Address", e.target.value)}
+                    value={patient.address}
+                    onChange={(e) => handleChange("address", e.target.value)}
                 />
                 <br /><br />
 
@@ -112,7 +142,7 @@ function AddPatient() {
                 <DropDown
                     defaultValue="Select Insurance Company"
                     options={["Star Insurance", "Jubliee"]}
-                    onSelect={(val) => handleChange("Insurance Company", val)}
+                    onSelect={(val) => handleChange("insurance_company", val)}
                 />
                 <br /><br />
 
@@ -120,8 +150,8 @@ function AddPatient() {
                 <br />
                 <Textbox
                     placeholder="Policy Number"
-                    value={patient["Policy Number"]}
-                    onChange={(e) => handleChange("Policy Number", e.target.value)}
+                    value={patient.policy_number}
+                    onChange={(e) => handleChange("policy_number", e.target.value)}
                 />
                 <br /><br />
 
@@ -130,11 +160,9 @@ function AddPatient() {
                 <DropDown
                     defaultValue="Select Policy Plan"
                     options={["Golden", "Silver", "Bronze"]}
-                    onSelect={(val) => handleChange("Plane Type", val)}
+                    onSelect={(val) => handleChange("plan_type", val)}
                 />
                 <br /><br /><br />
-
-                {isError && <p style={{ color: "red", marginBottom: "1rem" }}>{error?.response?.data?.detail || error?.message || "Registration failed"}</p>}
 
                 <Button text={isPending ? "Saving..." : "Save"} disabled={isPending} />
             </form>

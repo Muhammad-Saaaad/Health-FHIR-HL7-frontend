@@ -18,7 +18,7 @@ export default function Login() {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
-            <div className="bg-white rounded-3xl shadow-sm px-8 py-12 w-full max-w-sm">
+            <div className="bg-white rounded-3xl shadow-sm px-8 py-12 w-full max-w-sm shadow-black/40">
 
                 <h1 className="text-2xl font-bold text-center text-[#152F5B] mb-8">Login</h1>
 

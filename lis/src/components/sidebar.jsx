@@ -15,7 +15,7 @@ export default function Sidebar() {
     }, []);
 
     const menuItems = [
-        { icon: Home, label: 'Home', path: '/' },
+        { icon: Home, label: 'Home', path: '/home' },
         { icon: FlaskConical, label: 'Lab Test', path: '/lab-test' },
         { icon: Ruler, label: 'Record', path: '/record' },
     ];
@@ -76,7 +76,7 @@ export default function Sidebar() {
                     </button>
                     {isOpen && (
                         <h1 className="text-xl font-bold text-[#31486F] whitespace-nowrap overflow-hidden">
-                            Health Care
+                            LIS
                         </h1>
                     )}
                 </div>

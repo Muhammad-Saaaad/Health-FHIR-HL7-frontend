@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
 
-import { signup } from "../api/doctor";
+import { signup } from "../api/user";
 
 export default function SignUp() {
 
@@ -30,7 +30,7 @@ export default function SignUp() {
         e.preventDefault();
         
         mutate({
-            name: name,
+            user_name: name,
             email: email,
             password: password
         });

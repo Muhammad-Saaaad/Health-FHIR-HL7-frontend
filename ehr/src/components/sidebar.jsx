@@ -15,7 +15,7 @@ export default function Sidebar({ notificationCount = 2 }) {
     }, []);
 
     const menuItems = [
-        { icon: Home, label: 'Home', path: '/' },
+        { icon: Home, label: 'Home', path: '/home' },
         { icon: ClipboardPlus, label: 'Add Patient', path: '/ehr/add-patient' },
         { icon: Bell, label: 'Notification', path: '/notifications', badge: notificationCount },
         { icon: User, label: 'Profile', path: '/profile' },
@@ -77,7 +77,7 @@ export default function Sidebar({ notificationCount = 2 }) {
                     </button>
                     {isOpen && (
                         <h1 className="text-xl font-bold text-[#31486F] whitespace-nowrap overflow-hidden">
-                            Health Care
+                            EHR
                         </h1>
                     )}
                 </div>
@@ -113,7 +113,7 @@ export default function Sidebar({ notificationCount = 2 }) {
                                 {isOpen && <span className="font-medium">{item.label}</span>}
                             </button>
                         );
-                    })};
+                    })}
                 </nav>
             </aside>
         </>

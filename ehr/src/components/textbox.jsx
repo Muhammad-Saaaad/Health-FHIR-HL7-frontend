@@ -1,22 +1,26 @@
 import { useState, useRef } from "react";
+import { twMerge } from "tailwind-merge";
+
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Calendar } from "lucide-react";
 
 const Textbox = (props) => {
-    let {placeholder, type} = props;
+    let {placeholder, type, className, onChange} = props;
 
     type = type ? type : "text";
 
-    return <input type={type} className="border-2 border-[#E8F3F1] rounded-2xl w-full h-12 p-4"
+    return <input 
+        type={type} 
+        className={twMerge("border-2 border-[#E8F3F1] rounded-2xl w-full h-12 p-4", className)}
         placeholder={placeholder}
-        showYearDropdown={true}
-        showMonthDropdown={true}
+        onChange={onChange}
     />
 };
 
-export const DateTextBox =({placeholder}) =>{
-    const [date, seteDate] = useState(null);
+
+export const DateTextBox =({placeholder, onChange}) =>{
+    const [date, setDate] = useState(null);
     const inputRef = useRef(null);
 
     return (
@@ -24,11 +28,9 @@ export const DateTextBox =({placeholder}) =>{
             <DatePicker 
                 ref={inputRef}
                 selected={date}
-                onChange={(date) => {seteDate(date); inputRef.current.input.blur();}}
+                onChange={(date) => {setDate(date); onChange(date); inputRef.current.input.blur();}}
                 placeholderText={placeholder}
-                dateFormat="dd/MM/yyyy"
-                onFocus={(e) => e.target.blur()}
-                className="flex-1 outline-none text-sm text-gray-600 w-30 sm:w-55 md:w-30"
+                className="flex-1 outline-none text-sm text-gray-600 w-35 sm:w-55 md:w-55 lg:w-75"
                 disabledKeyboardNavigation
 
                 showYearDropdown

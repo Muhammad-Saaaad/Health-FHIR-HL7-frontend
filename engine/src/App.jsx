@@ -16,15 +16,15 @@ function App() {
     <>
       <Router>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/server-details" element={<ServerDetails />} />
           <Route path="/add-server" element={<AddServer />} />
           <Route path="/add-endpoint" element={<AddEndPoint />} />
           <Route path="/all-channels" element={<AllChannels />} />
           <Route path="/add-channels" element={<AddChannels />} />
           <Route path="/channel-details" element={<ChannelDetails />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
         </Routes>
       </Router>
     </>

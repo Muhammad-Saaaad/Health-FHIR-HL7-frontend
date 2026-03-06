@@ -15,7 +15,7 @@ export default function Sidebar() {
     }, []);
 
     const menuItems = [
-        { icon: Home, label: 'Home', path: '/' },
+        { icon: Home, label: 'Home', path: '/home' },
         { icon: Mail, label: 'Pending Claims', path: '/pending-claims' },
         { icon: ClipboardPlus, label: 'Add Customer', path: '/add-customer' },
     ];
@@ -76,7 +76,7 @@ export default function Sidebar() {
                     </button>
                     {isOpen && (
                         <h1 className="text-xl font-bold text-[#31486F] whitespace-nowrap overflow-hidden">
-                            Health Care
+                            Health Insurance
                         </h1>
                     )}
                 </div>

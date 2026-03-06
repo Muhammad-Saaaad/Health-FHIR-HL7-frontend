@@ -27,6 +27,7 @@ export default function Mapping({srcFieldIsSuccess, srcFieldData, destFieldISSuc
         }
 
         let is_valid_mapping = true;
+        // // srcChecked and destChecked contain this kind of data => [{endpoint_filed_id, path, name}, ...]
         srcChecked?.forEach(src_element => {
             // debugger;
             if (rule_validation[src_element.name]){
@@ -49,7 +50,7 @@ export default function Mapping({srcFieldIsSuccess, srcFieldData, destFieldISSuc
 
         if (!is_valid_mapping){
             return;
-        }
+        } // now we are sure that the mapping is valid and we can add it to the list of mappings. and then pass the data to api.
 
         const front_src = srcChecked.map(field => field.name).join(" + ");
         const front_dest = destChecked.map(field => field.name).join(" + ");

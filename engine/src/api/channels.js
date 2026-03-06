@@ -26,4 +26,10 @@ export const rule_validation = {
     fullname: {"dest": ["family name", "given name"], "type": "split", "config": {delimiter: " "}},
 
     "phone number": {"dest": ["phone number"], "type": "copy", "config": {}},
+
+    "address": {"dest": ["address"], "type": "copy", "config": {}},
+
+    "policy number": {"dest": ["policy number"], "type": "copy", "config": {}},
+
+    "plan type": {"dest": ["plan type"], "type": "copy", "config": {}},
 }
