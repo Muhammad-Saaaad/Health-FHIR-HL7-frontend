@@ -73,7 +73,9 @@ export default function DropDown(props) {
         <button
             type="button"
             onClick={() => setOpen(!open)}
-            className="text-start border-2 border-[#E8F3F1] text-gray-500 rounded-2xl w-70 h-10 p-2"
+            className={
+                `text-start border-2 border-[#E8F3F1] rounded-2xl w-70 h-10 p-2
+                 ${select === defaultValue ? "text-gray-400" : "text-gray-900"}`}
         >
             {select}
         </button>
@@ -85,6 +87,7 @@ export default function DropDown(props) {
                     return (
                         <div
                             key={keys[index]}
+                            value={element}
                             className="font-bold text-[#152F5B] p-2"
                             onClick={() => changeValue(keys[index], element)}
                         >

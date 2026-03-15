@@ -33,6 +33,15 @@ export default function Mapping({srcFieldIsSuccess, srcFieldData, destFieldISSuc
             if (rule_validation[src_element.name]){
 
                 let dest_value = rule_validation[src_element.name]; // give the destination list, type and config.
+                
+                if (src_element.name === "fullname"){
+                    if (dest_value.dest[0] !== destChecked[0]?.name || dest_value.dest[1] !== destChecked[1]?.name){
+                        alert(`destination name mapping is not in correct order`);
+                        is_valid_mapping = false;
+                        return false;
+                    }
+                }
+
                 destChecked?.forEach(dest_element => {
                     if (!dest_value.dest.includes(dest_element.name)){
                         alert(`You cannot map ${src_element.name} to ${dest_element.name}`);

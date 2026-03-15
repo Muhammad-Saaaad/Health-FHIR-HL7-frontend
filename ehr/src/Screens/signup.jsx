@@ -4,6 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
 
 import { signup } from "../api/doctor";
+import error_response from "../api/error_response";
 
 export default function SignUp() {
 
@@ -20,10 +21,7 @@ export default function SignUp() {
             alert("SignUp Completed");
             navigate("/login");
         },
-        onError: (error)=>{
-            alert(`Error: ${error?.response?.data?.detail || error?.message || "Unknown Error"}
-                Status: ${error?.response?.status}`)
-        }
+        onError: (error)=>{error_response(error, "Failed to SignUP")}
     });
 
     const handleSubmit = (e) => {

@@ -4,6 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { User, Lock, Eye, EyeOff } from "lucide-react";
 
 import { login } from "../api/user";
+import error_response from "../api/error_response";
 
 export default function SignUp() {
 
@@ -15,14 +16,11 @@ export default function SignUp() {
 
     const { mutate, isPending} = useMutation({
         mutationFn: login,
-        onSuccess: () => {
+        onSuccess: (res) => {
             alert("Login Completed");
-            navigate("/home");
+            navigate("/home", {state: res?.data});
         },
-        onError: (error)=>{
-            alert(`Error: ${error?.response?.data?.detail || error?.message || "Unknown Error"}
-                Status: ${error?.response?.status}`)
-        }
+        onError: (error)=>{error_response(error, "Failed to Login")}
     });
 
     const handleSubmit = (e) => {

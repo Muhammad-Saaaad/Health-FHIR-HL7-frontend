@@ -5,6 +5,6 @@ const api = axios.create({
 })
 
 export const get_doctors = async() => {
-    const response = await client.get("/all_doctors");
+    const response = await api.get("/all_doctors");
     return response;
 }

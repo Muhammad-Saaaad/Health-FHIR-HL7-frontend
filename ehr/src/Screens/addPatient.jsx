@@ -1,7 +1,9 @@
 import { useState } from "react"
 import { useMutation } from "@tanstack/react-query"
-import { reg_patient } from "../api/patient"
+import { useNavigate } from "react-router-dom"
 
+import error_response from "../api/error_response"
+import { reg_patient } from "../api/patient"
 import Heading from "../components/heading"
 import Label from "../components/label"
 import Textbox, { DateTextBox } from "../components/textbox"
@@ -10,7 +12,7 @@ import DropDown from "../components/dropdown"
 import Sidebar from "../components/sidebar"
 
 function AddPatient() {
-
+    const navigator = useNavigate();
     const [patient, setPatient] = useState({
         nic: "",
         name: "",
@@ -24,7 +26,7 @@ function AddPatient() {
     });
 
     const handleChange = (field, value) => {
-        console.log(`Updating field ${field} to value ${value}`);
+        // console.log(`Updating field ${field} to value ${value}`);
         setPatient(prev => ({ ...prev, [field]: value }));
     };
 
@@ -32,24 +34,9 @@ function AddPatient() {
         mutationFn: reg_patient,
         onSuccess: () => {
             alert("Patient registered successfully!");
+            navigator("/home");
         },
-        onError: (err) => {
-            const detail = err?.response?.data?.detail;
-            const status = err?.response?.status;
-    
-            let message;
-            // Sometimes FastAPI returns details as an array, and sometimes it returns it as a string,
-            // so we need to handle both cases. 
-            if (Array.isArray(detail)) {
-                // if an array we loop through each error, where the location of the error is in loc[1],
-                //  and the error message is in msg, and we join them with a new line.
-                message = detail.map(e => `${e.loc[1]}: ${e.msg}`).join("\n");
-            } else {
-                message = detail || err?.message || "Unknown error";
-            }
-            
-            alert(`Failed to register patient: ${message} (Status: ${status})`);
-        }
+        onError: (err) => {error_response(err, "Failed to Register Patient")}
     });
 
     const SubmitEvent = (e) => {

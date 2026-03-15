@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { useMutation } from "@tanstack/react-query"
 
 import { add_server } from "../api/server";
+import error_response from "../api/error_response";
 
 import Heading from "../components/heading"
 import Label from "../components/label"
@@ -18,11 +19,10 @@ export default function AddServer() {
         mutationFn: add_server, 
 
         onSuccess: () =>{
-            navigator("/");
+            alert("Server Added Sucessfully");
+            navigator("/dashboard");
         },
-        // onError: (error) => {
-        //     alert(error.response?.data?.detail || "Something went wrong");
-        // }
+        onError: (error) => {error_response(error, "Failed to add Server")}
     })
 
     const [name, setName] = useState("");

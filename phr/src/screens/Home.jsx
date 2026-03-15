@@ -1,4 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
+import { useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 import { get_doctors } from "../api/doctor"
 import Textbox from "../components/textbox";
@@ -10,15 +12,30 @@ const Home = () => {
   
   const { data, isLoading, isError, error, status } = useQuery({
     queryKey: ['phr_all_doctors'],
-    queryFn: get_doctors
+    queryFn: get_doctors,
   });
+  
+  const [records, setRecords] = useState();
+  const [searchRecords, setSearchRecords] = useState("");
 
-  console.log(data);
-  console.log( 'isloading', isLoading);
-  console.log('is error ', isError);
-  console.log('error', error);
-  console.log('status ', status);
+  useEffect(() => {
+    if(!isLoading && !isError && data){
+      setRecords(data?.data);
+    }
+  }, [data, status])
 
+  function searchValue(event){
+    const value = event.target.value;
+    if (value === ""){
+      setRecords(data?.data);
+      setSearchRecords(""); // "" is equal to null but [] and {} is not equal to null.
+      return;
+    }
+    setSearchRecords(records?.filter(item => item?.name?.includes(value) ));
+  }
+
+  const location = useLocation();
+  const user = location.state;
   
   return (
     <div className="flex h-screen overflow-hidden">
@@ -31,7 +48,7 @@ const Home = () => {
             <div className=" flex items-center justify-between gap-3">
 
               <div className="flex flex-col ">
-                <LowerHeading text="Muhammad Saad" />
+                <LowerHeading text={user?.name} />
                 <p className=" inline-block font-bold text-[#152F5B]">Welcome!</p>
               </div>
 
@@ -40,7 +57,10 @@ const Home = () => {
           </div>
 
           <div className="bg-white rounded-t-2xl min-h-screen p-5">
-            <Textbox placeholder="Search Doctors" />
+            <Textbox 
+              placeholder="Search Doctors"
+              onChange={searchValue}
+            />
             <br /><br />
 
             <div className="relative mb-4">
@@ -49,7 +69,7 @@ const Home = () => {
 
             {/* Patient list */}
             {
-              !isLoading && !isError && <Records data={data?.data}></Records>
+              !isLoading && !isError && <Records data={searchRecords? searchRecords : records}></Records>
             }
             
           </div>

@@ -23,7 +23,8 @@ export const rule_validation = {
 
     "birth date": {"dest": ["birth date"], "type": "format", "config": {"from": "%Y-%m-%d", "to": "%Y%m%d"}},
 
-    fullname: {"dest": ["family name", "given name"], "type": "split", "config": {delimiter: " "}},
+    // fullname: {"dest": ["family name", "given name"], "type": "split", "config": {delimiter: " "}},
+    fullname: {"dest": ["fullname"], "type": "split", "config": {delimiter: " "}},
 
     "phone number": {"dest": ["phone number"], "type": "copy", "config": {}},
 

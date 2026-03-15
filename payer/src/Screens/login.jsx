@@ -4,6 +4,7 @@ import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 
 import { login } from "../api/user";
 import { useMutation } from "@tanstack/react-query";
+import error_response from "../api/error_response";
 
 export default function Login() {
 
@@ -19,10 +20,7 @@ export default function Login() {
             alert("Login Sucessfull");
             navigate("/home");
         },
-        onError: (error) =>{
-            alert(`Error: ${error?.response?.data?.detail || error?.message || "Unknown Error"} 
-                Status: ${error?.response.status}`);
-        }
+        onError: (error) =>{error_response(error, "Failed to Login")}
     });
 
     const handleSubmit = (e) => {

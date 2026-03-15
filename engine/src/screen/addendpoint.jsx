@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 
 import { add_endpoint } from "../api/endpoint";
 import { get_servers } from "../api/server";
+import error_response from "../api/error_response";
 
 import Heading from "../components/heading"
 import Label from "../components/label"
@@ -13,12 +15,14 @@ import SideBar from "../components/sidebar"
 
 export default function AddEndPoint() {
 
+    const navigator = useNavigate();
     const [form, setForm] = useState({
         server_id: null,
         url: "",
         server_protocol: "",
         sample_msg: "",
     });
+
 
     const { data, isError: serverError, error: serverErrMsg } = useQuery({
         queryKey: ["endpoint_all_servers"],
@@ -33,18 +37,32 @@ export default function AddEndPoint() {
         onSuccess: () => {
             alert("Endpoint added successfully!");
         },
+        onError: (err) =>{error_response(err, "Failed to Add Endpoint")}
     });
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        mutate({
+        
+        const input = {
             server_id: form.server_id,
             url: form.url,
             server_protocol: form.server_protocol,
+            // server_protocol: protocol[0].protocol,
             sample_msg: form.server_protocol === "FHIR"
-                ? (() => { try { return JSON.parse(form.sample_msg); } catch { return form.sample_msg; } })()
+                // here the () at the end is called IIFE -> (Immediatliy invoke function Expression) meaning
+                // execute this function write away, without it, it won't execute. 
+                ? (() => { try { return JSON.parse(form.sample_msg); } catch { return form.sample_msg; } })() 
                 : form.sample_msg,
+        }
+        console.log(input);
+        mutate(input);
+        setForm({
+            server_id: null,
+            url: "",
+            server_protocol: "",
+            sample_msg: "",
         });
+        useNavigate("/dashboard");
     };
 
     return (
@@ -62,21 +80,25 @@ export default function AddEndPoint() {
                         keys={keys}
                         values={names}
                         defaultValue="Select Server"
-                        onSelect={(value) => setForm(prev => ({ ...prev, server_id: value }))}
+                        onSelect={(value) => {
+                            const protocol = data?.data?.filter(item => item.server_id === value);
+                            if (protocol.length !== 1){
+                                alert("Error while getting Server's Protocol");
+                                return ;
+                            }
+                            console.log("protocol: ",protocol[0].protocol);
+                            setForm(prev => (
+                                { 
+                                    ...prev,
+                                    server_id: value,
+                                    server_protocol: protocol[0].protocol 
+                                }
+                            ))
+                        }}
                     />
 
                     {serverError && <p className="text-red-500 font-semibold mt-1">{serverErrMsg?.message}</p>}
                     <br />
-
-                    {/* <Label text="Protocol"></Label>
-                    <br />
-                    <DropDown
-                        keys={["FHIR", "HL7"]}
-                        values={["FHIR", "HL7"]}
-                        defaultValue="Select Protocol"
-                        onSelect={(value) => setForm(prev => ({ ...prev, server_protocol: value }))}
-                    />
-                    <br /> */}
 
                     <Label text="URL"></Label>
                     <br />
@@ -89,7 +111,7 @@ export default function AddEndPoint() {
                     <Label text="Sample Message"></Label>
                     <br />
                     <textarea
-                        placeholder={form.server_protocol === "HL7" ? "Enter raw HL7 message (segments separated by \\n)" : "Enter FHIR JSON"}
+                        placeholder={form.server_protocol === "HL7" ? "Enter raw HL7 message" : "Enter FHIR JSON"}
                         className="border-2 border-[#E8F3F1] rounded-xl w-full p-2 h-100"
                         value={form.sample_msg}
                         onChange={(e) => setForm(prev => ({ ...prev, sample_msg: e.target.value }))}

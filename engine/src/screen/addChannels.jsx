@@ -5,6 +5,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { get_servers } from "../api/server";
 import { get_endpoints, get_endpointFields } from '../api/endpoint';
 import { add_channel } from "../api/channels";
+import error_response from "../api/error_response";
 
 import Heading from "../components/heading"
 import Label from "../components/label"
@@ -41,8 +42,8 @@ export default function AddChannels() {
 
     const {mutate, isPending} = useMutation({
         mutationFn: (data) => add_channel(data),
-        onSuccess: () => {alert("Channel added successfully!"); navigate("/channels")},
-        onError: (err) => alert("Error adding channel: " + err.message)
+        onSuccess: () => {alert("Channel added successfully!"); navigate("/all-channels")},
+        onError: (err) => {error_response(err, "Faild to Add Channel")}
     })
 
     const { data: severData, isSuccess: serverIsStatus, isError: serverIsError, error: serverError } = useQuery({

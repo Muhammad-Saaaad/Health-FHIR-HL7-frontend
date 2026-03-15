@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
+
 import { reg_patients } from "../api/patient";
+import error_response from "../api/error_response";
 
 import Sidebar from "../components/sidebar";
 import { LowerHeading } from "../components/heading"
@@ -28,9 +30,7 @@ export default function AddCustomer() {
         onSuccess: () => {
             alert(`Customer registered successfully!`);
         },
-        onError: (err) => {
-            alert("Error registering customer: " + (err?.response?.data?.detail || err.message || "Unknown error"));
-        }
+        onError: (err) => {error_response(err, "Failed to add customer")}
     });
 
     const handleSubmit = (e) => {

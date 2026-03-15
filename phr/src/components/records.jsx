@@ -11,20 +11,20 @@ export default function Records({data}){
                 <div className="col-span-11" >
                   <div className="flex space-x-5 items-center">
                     <div>
-                      <img src="/icons/main/Profile_pic.png" alt="profile" className="w-20 h-20"/>
+                      <img src="/icons/Profile_pic.png" alt="profile" className="w-17 h-17"/>
                     </div>
                     <div>
                       <p className="font-bold text-[#152F5B]">{item.name}</p>
-                      <p className="font-bold opacity-60">MPI: {item.mpi}</p>
-                      <p className="opacity-40">Updated at: {item.updated_at}</p>
-                      <p className="opacity-60 font-bold">policy_number: {item.policy_number}</p>
+                      <p className="font-bold opacity-60">phone_no: {item.phone_no}</p>
+                      <p className="opacity-40">last visit: {item.last_visit.split("T")[0]}</p>
+                      <p className="opacity-60 font-bold">speclization: {item.speclization}</p>
                     </div>
                   </div>
                 </div>
 
                 <div className="flex justify-start items-center col-span-1">
                   <button type="button">
-                    <img src="/icons/main/go_arrow.png" alt=">" className="h-5 w-3" />
+                    <img src="/icons/go_arrow.png" alt=">" className="h-5 w-3" />
                   </button>
                 </div> 
              </div>           

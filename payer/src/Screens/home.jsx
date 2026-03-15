@@ -9,7 +9,7 @@ import Records from "../components/records";
 
 const Home = () => {
 
-  const { data, isLoading, isError, error } = useQuery({
+  const { data, isLoading, isError, error, status } = useQuery({
     queryKey: ["payer_getPatients"],
     queryFn: get_patients,
   });
