@@ -1,13 +1,14 @@
 import { useState } from "react"
+import { useQuery } from "@tanstack/react-query";
 
 import Button from "./button";
 import MappingColumns from "./mappingColumns"
-import { rule_validation } from '../api/channels'; // just a json variable
+import { get_mapping_suggestions } from "../api/channels";
 
 export default function Mapping({srcFieldIsSuccess, srcFieldData, destFieldISSuccess, destFieldData, takeData, removeData}) {
 
-    const [srcChecked, setSrcChecked] = useState([]);   // list of checked src field names
-    const [destChecked, setDestChecked] = useState([]);   // list of checked dest field names
+    const [srcChecked, setSrcChecked] = useState([]);   // list of checked src field id
+    const [destChecked, setDestChecked] = useState([]);   // list of checked dest field id
     
     const toggleSrc = (field) =>{ // if field is already in checked list, remove it, otherwise add it.
         setSrcChecked(prev => prev.includes(field) ? prev.filter(f => f !== field) : [...prev, field]);
@@ -68,7 +69,11 @@ export default function Mapping({srcFieldIsSuccess, srcFieldData, destFieldISSuc
 
         const frontLine = `${front_src} → ${front_dest}`;
         const backLine = `${back_src} → ${back_dest}`;
+        
+        // if any mapping does not already exists in the set mapping then only add the mapping,
+        //  this is to avoid duplicate mapping.
         if (!mappings.some(m => m.frontLine === frontLine)) {
+            
             setMappings(prev => [...prev, {"frontLine": frontLine, "backLine": backLine}]);
 
             // we can just take the first one because if there are multiple source fields, 

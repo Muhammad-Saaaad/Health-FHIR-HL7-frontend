@@ -75,7 +75,7 @@ export default function AddChannels() {
         enabled: !!data.dest_endpoint_id
     });
 
-    // As sson as server is assign an id, hit the api to get the endpoints for that seever.
+    // As soon as server is assign an id, hit the api to get the endpoints for that server.
     function onSelectSrcServer(server_id) {
         setData(prev => ({ ...prev, "src_server_id": server_id}));
         // here the query will automatically run because of the enabled condition
