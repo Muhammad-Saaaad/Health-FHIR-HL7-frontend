@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function SearchDropDown({ options, defaultValue, onSelect }) { // custom dropdown
 
@@ -52,10 +52,14 @@ export function SearchDropDown({ options, defaultValue, onSelect }) { // custom 
 
 export default function DropDown(props) {
     // This onSelect is a function that is given from the parent to this compoenent
-    let { keys, values, defaultValue, onSelect } = props;
+    let { keys, values, defaultValue, onSelect, resetTrigger } = props;
 
     const [open, setOpen] = useState(false);
     const [select, setSelect] = useState(defaultValue);
+
+    useEffect(() => {
+        setSelect(defaultValue);
+    }, [defaultValue, resetTrigger]);
 
     if (keys.length > 0 && values.length > 0 && keys.length !== values.length) {
         alert("Keys and values must have the same length, for dropdown.")

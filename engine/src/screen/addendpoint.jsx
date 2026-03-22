@@ -22,6 +22,7 @@ export default function AddEndPoint() {
         server_protocol: "",
         sample_msg: "",
     });
+    const [reset, setReset] = useState(false);
 
 
     const { data, isError: serverError, error: serverErrMsg } = useQuery({
@@ -36,8 +37,18 @@ export default function AddEndPoint() {
         mutationFn: add_endpoint,
         onSuccess: () => {
             alert("Endpoint added successfully!");
+            navigator("/dashboard");
         },
-        onError: (err) =>{error_response(err, "Failed to Add Endpoint")}
+        onError: (err) =>{
+            error_response(err, "Failed to Add Endpoint");
+            setForm({
+                server_id: null,
+                url: "",
+                server_protocol: "",
+                sample_msg: "",
+            });
+            setReset(prev => !prev);
+        }
     });
 
     const handleSubmit = (e) => {
@@ -51,18 +62,15 @@ export default function AddEndPoint() {
             sample_msg: form.server_protocol === "FHIR"
                 // here the () at the end is called IIFE -> (Immediatliy invoke function Expression) meaning
                 // execute this function write away, without it, it won't execute. 
-                ? (() => { try { return JSON.parse(form.sample_msg); } catch { return form.sample_msg; } })() 
+                ? (() => { try { return JSON.parse(form.sample_msg); } catch (err) { console.error(err);return false } })() 
                 : form.sample_msg,
         }
         console.log(input);
+        if (input.sample_msg === false){
+            alert("Invalid sample message format");
+            return;
+        }
         mutate(input);
-        setForm({
-            server_id: null,
-            url: "",
-            server_protocol: "",
-            sample_msg: "",
-        });
-        useNavigate("/dashboard");
     };
 
     return (
@@ -80,6 +88,7 @@ export default function AddEndPoint() {
                         keys={keys}
                         values={names}
                         defaultValue="Select Server"
+                        resetTrigger={reset}
                         onSelect={(value) => {
                             const protocol = data?.data?.filter(item => item.server_id === value);
                             if (protocol.length !== 1){
@@ -97,7 +106,11 @@ export default function AddEndPoint() {
                         }}
                     />
 
-                    {serverError && <p className="text-red-500 font-semibold mt-1">{serverErrMsg?.message}</p>}
+                    {serverError && 
+                        <p className="text-red-500 font-semibold mt-1">
+                            {serverErrMsg?.message || serverErrMsg?.response?.data?.detail || "Failed to add endpoint"}
+                        </p>
+                    }
                     <br />
 
                     <Label text="URL"></Label>

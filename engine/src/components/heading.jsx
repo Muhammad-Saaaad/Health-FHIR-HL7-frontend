@@ -1,3 +1,5 @@
+import { twMerge } from "tailwind-merge";
+
 function Heading(props){
     let { text } = props;
 
@@ -5,8 +7,8 @@ function Heading(props){
     return element;
 }
 
-export function LowerHeading({ text }){
-    let element = <h1 className="text-3xl font-bold font-sans text-[#152F5B]">{text}</h1>;
+export function LowerHeading({ text, className }){
+    let element = <h1 className={twMerge("text-3xl font-bold font-sans text-[#152F5B]", className)}>{text}</h1>;
     return element; 
 }
 

@@ -52,7 +52,7 @@ export default function Dashboard() {
 
                 <div className="my-3 grid grid-cols-3">
                     <div className="flex items-center">
-                        <LowerHeading text="Server" />
+                        <LowerHeading text="Servers" />
                     </div>
                     <div className="col-start-3 text-end">
                         <Button className="h-13" text="Add Server" onClickPath="/add-server" type="button" />
@@ -62,7 +62,7 @@ export default function Dashboard() {
                 <div>
                     {isLoading && <p className="text-[#7A7979] font-semibold">Loading servers...</p>}
                     {isError && <p className="text-red-500 font-semibold">{error}</p>}
-                    {!isLoading && !isError && <Table data={data.data} columns={["Server Name", "Protocol", "Status", "View Detail"]} />}
+                    {!isLoading && !isError && <Table data={data.data} />}
                 </div>
             </main>
         </div>

@@ -1,20 +1,11 @@
 import { twMerge } from "tailwind-merge"
 import { useNavigate } from "react-router-dom"
 
-export default function Table({ data, columns }) {
-
-    const table_header = "flex justify-center items-center font-bold text-[#152F5B] border-b-2"
-    const table_content = "flex justify-center items-center font-semibold"
-
+export default function Table({ data }) {
     const navigator = useNavigate();
 
     return (
-        <div className="grid grid-cols-4 md:text-xl text-center">
-            <div className={table_header}> {columns[0]}  </div>
-            <div className={table_header}> {columns[1]}  </div>
-            <div className={table_header}> {columns[2]}  </div>
-            <div className={table_header}> {columns[3]}  </div>
-
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 md:text-xl text-center ">
             {
                 data?.map((item, index) => {
 
@@ -24,35 +15,43 @@ export default function Table({ data, columns }) {
                     }
 
                     // you should add the key to the parent container instead of child containers.
-                    return <div key={index} className="col-span-full grid grid-cols-4 border-b-2 p-1 md:p-3">
-                        <div className={table_content}>
+                    return <div key={index} className="m-2 border-2 border-gray-400 rounded-lg px-2 py-1 shadow-lg">
+                        <div className="font-extrabold text-[#152F5B] text-xl text-start">
                             {item.name}
                         </div>
-                        <div className={table_content}>
-                            {item.protocol}
-                        </div>
+                        <hr />
 
-                        <div className={twMerge(table_content, color_status)}>
-                            {item.status}
-                        </div>
+                        <div className="flex justify-between mt-1">
+                            <div>
+                                <div>
+                                    <p className="font-bold inline-block text-lg">Protocol:</p>
+                                    {" "+item.protocol}
+                                </div>
+                                <div className={twMerge(color_status, "text-start font-semibold")}>
+                                    {item.status}
+                                </div>
+                            </div>
 
-                        <div className={twMerge(table_content, "font-bold active:text-gray-600")}>
-                            <button
-                                onClick={
-                                    () => navigator("/server-details",
-                                        {
-                                            state: {
-                                                "server_name": item.name,
-                                                "protocol": item.protocol,
-                                                "status": item.status,
-                                                "ip": item.ip,
-                                                "port": item.port
-                                            }
-                                        })
-                                }
-                            >
-                                View {">"}
-                            </button>
+
+                            <div className={"text-lg flex justify-center items-end font-bold active:text-gray-600"}>
+                                <button
+                                    onClick={
+                                        () => navigator("/server-details",
+                                            {
+                                                state: {
+                                                    "server_name": item.name,
+                                                    "protocol": item.protocol,
+                                                    "status": item.status,
+                                                    "ip": item.ip,
+                                                    "port": item.port
+                                                }
+                                            })
+                                    }
+                                >
+                                    View {">"}
+                                </button>
+                            </div>
+
                         </div>
 
                     </div>
@@ -63,36 +62,37 @@ export default function Table({ data, columns }) {
 }
 
 
-export function ChannelsTable({ data, columns }) {
-
-    const table_header = "flex justify-center items-center font-bold text-[#152F5B] border-b-2"
-    const table_content = "flex justify-center items-center font-semibold text-center"
+export function ChannelsTable({ data }) {
 
     const navigator = useNavigate();
 
     return (
-        <div className="grid grid-cols-4 md:text-xl text-center gap-y-4">
-            <div className={table_header}> {columns[0]}  </div>
-            <div className={table_header}> {columns[1]}  </div>
-            <div className={table_header}> {columns[2]}  </div>
-            <div className={table_header}> {columns[3]}  </div>
-
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 md:text-xl text-center ">
             {
                 data?.map((item, index) => {
+
                     // you should add the key to the parent container instead of child containers.
-                    return <div key={index} className="col-span-full grid grid-cols-4 border-b-2 p-1 md:p-3">
-                        <div className={table_content}>
+                    return <div key={index} className="m-2 border-2 border-gray-400 rounded-lg px-2 py-1 shadow-lg">
+                        <div className="font-extrabold text-[#152F5B] text-xl text-start">
                             {item.channel_name}
                         </div>
-                        <div className={table_content}>
-                            {item.source}
-                        </div>
+                        <hr />
 
-                        <div className={table_content}>
-                            {item.destination}
-                        </div>
+                        <div className="flex justify-between mt-1">
+                            <div className="text-start">
+                                <div>
+                                    <p className="font-bold inline-block text-lg">source:</p>
+                                    {" "+item.source}
+                                </div>
+                                <div>
+                                    <p className="font-bold inline-block text-lg">destination:</p>
+                                    {" "+item.destination}
+                                </div>
+                                
+                            </div>
 
-                        <div className={twMerge(table_content, "font-bold active:text-gray-600")}>
+
+                            <div className="text-lg flex justify-center items-end text-center font-bold active:text-gray-600">
                             <button
                                 onClick={
                                     () => navigator("/channel-details",
@@ -105,9 +105,35 @@ export function ChannelsTable({ data, columns }) {
                             </button>
                         </div>
 
+                        </div>
+
                     </div>
                 })
             }
         </div>
+
+        // <div className="grid grid-cols-4 md:text-xl text-center gap-y-4">
+           
+        //     {
+        //         data?.map((item, index) => {
+        //             // you should add the key to the parent container instead of child containers.
+        //             return <div key={index} className="col-span-full grid grid-cols-4 border-b-2 p-1 md:p-3">
+        //                 <div className={table_content}>
+        //                     {item.channel_name}
+        //                 </div>
+        //                 <div className={table_content}>
+        //                     {item.source}
+        //                 </div>
+
+        //                 <div className={table_content}>
+        //                     {item.destination}
+        //                 </div>
+
+        //                 
+
+        //             </div>
+        //         })
+        //     }
+        // </div>
     )
 }
