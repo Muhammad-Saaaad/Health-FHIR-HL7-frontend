@@ -19,7 +19,7 @@ export default function MappingColumns({FIELDS, checked, toggle }) {
                         
                         // the cursor-pointer turn the arrow into a finger for better representation.
                         // select-none means that the user cannot highlight or select the text.
-                        <label key={field.endpoint_filed_id} className="flex items-center gap-2 mb-1 cursor-pointer select-none">
+                        <label key={field.endpoint_field_id} className="flex items-center gap-2 mb-1 cursor-pointer select-none">
                             
                             <input
                                 type="checkbox"

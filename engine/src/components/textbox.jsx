@@ -18,6 +18,7 @@ const Textbox = (props) => {
                 value={value}
                 onChange={onChange}
                 readOnly={readOnly}
+                required={true}
             />
         </div>
     )

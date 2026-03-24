@@ -4,11 +4,38 @@ import { useQuery } from "@tanstack/react-query";
 import Button from "./button";
 import MappingColumns from "./mappingColumns"
 import { get_mapping_suggestions } from "../api/channels";
+import error_response from "../api/error_response";
 
-export default function Mapping({srcFieldIsSuccess, srcFieldData, destFieldISSuccess, destFieldData, takeData, removeData}) {
+export default function Mapping({
+    src_server_id,
+    dest_server_id,
+    srcFieldIsSuccess,
+    srcFieldData,
+    destFieldISSuccess,
+    destFieldData, 
+    takeData, 
+    removeData
+}) {
 
-    const [srcChecked, setSrcChecked] = useState([]);   // list of checked src field id
-    const [destChecked, setDestChecked] = useState([]);   // list of checked dest field id
+    
+    const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);   // list of checked src field obj
+    const [srcChecked, setSrcChecked] = useState([]);   // list of checked src field obj
+    const [destChecked, setDestChecked] = useState([]);   // list of checked dest field obj
+
+    const {refetch} = useQuery({
+        queryKey: [
+            "get_mapping_suggestions",
+            srcChecked.map(f => f.endpoint_field_id),
+            destChecked.map(f => f.endpoint_field_id)
+        ],
+        queryFn: () => get_mapping_suggestions(
+            src_server_id, 
+            dest_server_id, 
+            srcChecked.map(f => f.endpoint_field_id), 
+            destChecked.map(f => f.endpoint_field_id)
+        ),
+        enabled: false
+    });
     
     const toggleSrc = (field) =>{ // if field is already in checked list, remove it, otherwise add it.
         setSrcChecked(prev => prev.includes(field) ? prev.filter(f => f !== field) : [...prev, field]);
@@ -20,80 +47,55 @@ export default function Mapping({srcFieldIsSuccess, srcFieldData, destFieldISSuc
 
     const [mappings, setMappings] = useState([]);   // added mapping strings
     
-    const addMapping = () => {
-        if (srcChecked.length === 0 || destChecked.length === 0) 
+    const addMapping = async () => {
+        if (srcChecked.length === 0 || destChecked.length === 0)
             return;
         if (srcChecked.length > 1 && destChecked.length > 1) {
             return alert("Please select only one source or one destination field to create mapping.");
         }
 
-        let is_valid_mapping = true;
-        // // srcChecked and destChecked contain this kind of data => [{endpoint_filed_id, path, name}, ...]
-        srcChecked?.forEach(src_element => {
-            // debugger;
-            if (rule_validation[src_element.name]){
-
-                let dest_value = rule_validation[src_element.name]; // give the destination list, type and config.
-                
-                if (src_element.name === "fullname"){
-                    if (dest_value.dest[0] !== destChecked[0]?.name || dest_value.dest[1] !== destChecked[1]?.name){
-                        alert(`destination name mapping is not in correct order`);
-                        is_valid_mapping = false;
-                        return false;
-                    }
-                }
-
-                destChecked?.forEach(dest_element => {
-                    if (!dest_value.dest.includes(dest_element.name)){
-                        alert(`You cannot map ${src_element.name} to ${dest_element.name}`);
-                        is_valid_mapping = false;
-                        return false;
-                    }
-                });
-            }
-            else{
-                alert(`${src_element.name} is not present in the validation list.`);
-                is_valid_mapping = false;
-                return false;
-            }
-        });
-
-        if (!is_valid_mapping){
+        // this will call the get_mapping_suggestions api with the selected fields and get
+        // the mapping suggestions. and then we can add the mapping to the list of mappings.
+        // and then pass the data to api.
+        setIsLoadingSuggestions(true);
+        
+        const {data, isError, error} = await refetch();
+        if (isError){
+            error_response(error, "Failed to get mapping suggestions");
+            setIsLoadingSuggestions(false);
             return;
         } // now we are sure that the mapping is valid and we can add it to the list of mappings. and then pass the data to api.
+        const suggestion = data?.data;
 
-        const front_src = srcChecked.map(field => field.name).join(" + ");
-        const front_dest = destChecked.map(field => field.name).join(" + ");
-        const back_src = srcChecked.map(field => field.endpoint_filed_id).join(" + ");
-        const back_dest = destChecked.map(field => field.endpoint_filed_id).join(" + ");
+        const front_src = suggestion?.src_names?.map(field_name => field_name).join(" + ");
+        const front_dest = suggestion?.dest_names?.map(field_name => field_name).join(" + ");
+        const back_src = suggestion?.src_field_ids?.map(field_id => field_id).join(" + ");
+        const back_dest = suggestion?.dest_field_ids?.map(field_id => field_id).join(" + ");
 
         const frontLine = `${front_src} → ${front_dest}`;
         const backLine = `${back_src} → ${back_dest}`;
+        console.log("frontLine: ", frontLine);
+        console.log("backLine: ", backLine);
+        if (front_src === undefined || front_dest === undefined || back_src === undefined || back_dest === undefined){
+            setIsLoadingSuggestions(false);
+            alert("Undefined: something is wrong with the mapping suggestion, please try again.");
+            return;
+        }
         
         // if any mapping does not already exists in the set mapping then only add the mapping,
         //  this is to avoid duplicate mapping.
         if (!mappings.some(m => m.frontLine === frontLine)) {
-            
             setMappings(prev => [...prev, {"frontLine": frontLine, "backLine": backLine}]);
-
-            // we can just take the first one because if there are multiple source fields, 
-            // then the transformation will be concat and and it will be same for mutliple source fields.,
-            // Similarly if there are multiple destination fields, then the transformation will be split
-            // but again the transform type and the config will be a only 1.
-            let dest_value = rule_validation[srcChecked[0].name]; 
-            let transform = dest_value.type;
-            let config = dest_value.config;
-
             takeData( // pass the selected fields and transformation config to parent component, so that it can be included in the final data to submit.
                 {
-                    "src_paths": srcChecked.map(field => field.endpoint_filed_id),
-                    "dest_paths": destChecked.map(field => field.endpoint_filed_id),
-                    "transform": transform,
-                    "config": config
+                    "src_paths": suggestion?.src_field_ids,
+                    "dest_paths": suggestion?.dest_field_ids,
+                    "transform": suggestion?.transform_type,
+                    "config": suggestion?.config
                 }
             );
         }
-        
+        setIsLoadingSuggestions(false);
         setSrcChecked([]);
         setDestChecked([]);
     };
@@ -152,9 +154,10 @@ export default function Mapping({srcFieldIsSuccess, srcFieldData, destFieldISSuc
             {/* Add Mapping button */}
             <div className="flex justify-center mt-4">
                 <Button 
-                    text="Add Mapping" 
+                    text= {isLoadingSuggestions ? "Loading..." : "Add Mapping" }
                     className="font-semibold h-10 text-sm md:text-lg/2 rounded-full"
                     onClickfunction={addMapping}
+                    isDisabled = {isLoadingSuggestions}   // disable the button while loading suggestions
                 />
             </div>
 

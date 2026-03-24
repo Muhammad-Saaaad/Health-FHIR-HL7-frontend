@@ -54,7 +54,7 @@ export default function AddChannels() {
     const { data: srcEndpointData, isSuccess: srcEndpointISSuccess } = useQuery({
         queryKey: ['get_srcEndpoints_for_dropdown', data.src_server_id],
         queryFn: () => get_endpoints(data.src_server_id),
-        enabled: !!data.src_server_id, // don't run on mount
+        enabled: !!data.src_server_id, // don't run on mount, only runs when src_server_id has some data.
     });
 
     const { data: destEndpointData, isSuccess: destEndpointISSuccess } = useQuery({
@@ -94,6 +94,9 @@ export default function AddChannels() {
         }
         console.log("Final data to submit: ", finalData);
 
+        if (!data.name || !data.src_server_id || !data.src_endpoint_id || !data.dest_server_id || !data.dest_endpoint_id || !data.msg_type) {
+            return alert("Please fill in all the fields to add a channel.");
+        }
         mutate(finalData);
     }
 
@@ -158,7 +161,9 @@ export default function AddChannels() {
                 />
                 <br /><br />
 
-                <Mapping // 
+                <Mapping 
+                    src_server_id={data.src_server_id}
+                    dest_server_id={data.dest_server_id}
                     srcFieldIsSuccess={srcFieldIsSuccess} // we give this so that the fields can be display on the table.
                     srcFieldData={srcFieldData} // the field data to be displayed on the mapping table.
                     destFieldISSuccess={destFieldISSuccess} 

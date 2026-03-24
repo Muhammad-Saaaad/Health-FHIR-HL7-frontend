@@ -1,6 +1,8 @@
-import { useLocation } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { get_mappings } from "../api/channels";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useQuery, useMutation } from "@tanstack/react-query";
+
+import { delete_channel, get_mappings } from "../api/channels";
+import error_response from "../api/error_response";
 
 import Heading from "../components/heading";
 import Label from "../components/label";
@@ -12,6 +14,19 @@ export default function ChannelDetails() {
 
     const location = useLocation();
     const route = location.state; // full route object from API
+
+    const navigator = useNavigate();
+
+    const { mutate } = useMutation({
+        mutationFn: (channel_id) => delete_channel(channel_id),
+        onSuccess: () => {
+            navigator("/all-channels");
+            alert("Channel deleted successfully!");
+        },
+        onError: (error) => {
+            error_response(error, "Error deleting channel");
+        }
+    });
 
     const { data: mappingData, isLoading: mappingLoading, isError: mappingError } = useQuery({
         queryKey: ["get_mappings", route?.route_id],
@@ -90,7 +105,11 @@ export default function ChannelDetails() {
 
                 <div className="flex justify-center space-x-10 md:space-x-20 lg:space-x-40">
                     <Button className="w-40" text="Edit" />
-                    <Button className="w-40 bg-gray-200 text-[#202020]" text="Delete" />
+                    <Button className="w-40 bg-gray-200 text-[#202020]" text="Delete" onClickfunction={() => {
+                        if (window.confirm("Are you sure you want to delete this channel? This action cannot be undone.")) {
+                            mutate(route.route_id);
+                        }
+                    }} />
                 </div>
 
             </main>

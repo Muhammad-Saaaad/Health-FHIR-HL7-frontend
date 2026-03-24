@@ -3,6 +3,7 @@
 * React router dom `npm install react-router-dom`
 * tailwindcss `npm install tailwindcss @tailwindcss/vite` and then go to vite.config.js and add `tailwindcss()` in `plugin` list.
 * React Query | Tanstackquery for managing api calls instead of using manual (useState, useEffect, loading, error handling, caching, etc) `npm i @tanstack/react-query`
+* React Query Dev Tools `npm i @tanstack/react-query-devtools`
 * axios `npm install axios`
 * lucide-react `npm install lucide-react`
 * date picker `npm install react-datepicker`

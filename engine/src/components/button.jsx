@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 const Button = (props) => {
     
     // If type is button then only submit the onClickPath button.
-    let { text, className, onClickPath, type, onClickfunction} = props;
+    let { text, className, onClickPath, type, onClickfunction, isDisabled } = props;
 
     const navigator = useNavigate();
 
@@ -24,6 +24,7 @@ const Button = (props) => {
         }
         onClick={handleClick}
         type={type} // submit | button
+        disabled={isDisabled}
     >
         {text}
     </button>
