@@ -1,4 +1,4 @@
-export default function MappingColumns({FIELDS, checked, toggle }) {
+export default function MappingColumns({FIELDS, checked, allChecked, toggle }) {
 
     let fontendData = {} 
     // blow loop will make this:
@@ -26,9 +26,13 @@ export default function MappingColumns({FIELDS, checked, toggle }) {
                                 className="w-4 h-4 accent-[#31486F]" // accent is the color of the checkbox when it's checked.
                                 checked={checked.includes(field)} // if the field is in the checked list, then it's checked.
                                 onChange={() => toggle(field)}
+                                disabled={allChecked.includes(field)} // if the field is already mapped, disable the checkbox to prevent it from being selected again.
                             />
 
-                            <span className={`text-sm ${checked.includes(field) ? "line-through text-gray-400" : "text-gray-700"}`}>
+                            <span className={`text-sm 
+                                ${checked.includes(field) ? "line-through text-gray-400" : "text-gray-700"}
+                                ${allChecked.includes(field) && "line-through text-gray-400"}`
+                            }>
                                 {field.name}
                             </span>
 

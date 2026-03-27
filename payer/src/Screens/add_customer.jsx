@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 
 import { reg_patients } from "../api/patient";
@@ -21,6 +22,8 @@ export default function AddCustomer() {
         plan_type: "",
     });
 
+    const navigator = useNavigate();
+
     const handleChange = (field, value) => {
         setForm(prev => ({ ...prev, [field]: value }));
     };
@@ -29,6 +32,7 @@ export default function AddCustomer() {
         mutationFn: reg_patients,
         onSuccess: () => {
             alert(`Customer registered successfully!`);
+            navigator("/home");
         },
         onError: (err) => {error_response(err, "Failed to add customer")}
     });

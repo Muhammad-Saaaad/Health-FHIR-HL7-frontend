@@ -21,6 +21,8 @@ export default function Mapping({
     const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);   // list of checked src field obj
     const [srcChecked, setSrcChecked] = useState([]);   // list of checked src field obj
     const [destChecked, setDestChecked] = useState([]);   // list of checked dest field obj
+    
+    const [allChecked, setAllChecked] = useState([]); // marks all the fields that are already mapped.
 
     const {refetch} = useQuery({
         queryKey: [
@@ -40,7 +42,7 @@ export default function Mapping({
     const toggleSrc = (field) =>{ // if field is already in checked list, remove it, otherwise add it.
         setSrcChecked(prev => prev.includes(field) ? prev.filter(f => f !== field) : [...prev, field]);
     };
-
+    
     const toggleDest = (field) => {
         setDestChecked(prev => prev.includes(field) ? prev.filter(f => f !== field) : [...prev, field]);
     };
@@ -96,6 +98,7 @@ export default function Mapping({
             );
         }
         setIsLoadingSuggestions(false);
+        setAllChecked(prev => [...prev, ...srcChecked, ...destChecked]); // add the selected fields to the allChecked list to disable them in the UI.
         setSrcChecked([]);
         setDestChecked([]);
     };
@@ -111,6 +114,8 @@ export default function Mapping({
         // {"backLine": "src1_id + src2_id → dest1_id + dest2_id"}
         let src_paths = line.backLine.split(" → ")[0].split(" + ").map(Number);
         let dest_paths = line.backLine.split(" → ")[1].split(" + ").map(Number);
+        // add remove from all_checked.
+        setAllChecked(prev => prev.filter(f => !src_paths.includes(f.endpoint_field_id) && !dest_paths.includes(f.endpoint_field_id)));        
 
         removeData({"src_paths": src_paths, "dest_paths": dest_paths});
     };
@@ -138,7 +143,8 @@ export default function Mapping({
                     {/* Source column */}
                     <MappingColumns 
                         FIELDS={srcFieldIsSuccess ? srcFieldData.data : []} 
-                        checked={srcChecked} 
+                        checked={srcChecked}
+                        allChecked={allChecked} 
                         toggle={toggleSrc} 
                     />
 
@@ -146,6 +152,7 @@ export default function Mapping({
                     <MappingColumns 
                         FIELDS={destFieldISSuccess ? destFieldData.data : []} 
                         checked={destChecked} 
+                        allChecked={allChecked}
                         toggle={toggleDest} 
                     />
                 </div>

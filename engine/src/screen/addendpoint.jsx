@@ -53,7 +53,7 @@ export default function AddEndPoint() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        
+        console.log(form.server_protocol);
         const input = {
             server_id: form.server_id,
             url: form.url,
@@ -62,7 +62,7 @@ export default function AddEndPoint() {
             sample_msg: form.server_protocol === "FHIR"
                 // here the () at the end is called IIFE -> (Immediatliy invoke function Expression) meaning
                 // execute this function write away, without it, it won't execute. 
-                ? (() => { try { return JSON.parse(form.sample_msg); } catch (err) { console.error(err);return false } })() 
+                ? (() => { try { return JSON.parse(form.sample_msg); } catch (err) { console.error(err); return false; } })() 
                 : form.sample_msg,
         }
         console.log(input);

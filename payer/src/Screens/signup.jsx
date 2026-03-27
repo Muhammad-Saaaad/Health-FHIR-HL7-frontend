@@ -104,7 +104,7 @@ export default function SignUp() {
                             onClick={() => navigate("/login")}
                             className="text-blue-500 font-semibold"
                         >
-                            Sign Up
+                            Sign In
                         </button>
                     </p>
 
