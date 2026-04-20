@@ -5,7 +5,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Calendar } from "lucide-react";
 
-const Textbox = (props) => {
+export const Textbox = (props) => {
     let {placeholder, type, className, onChange} = props;
 
     type = type ? type : "text";

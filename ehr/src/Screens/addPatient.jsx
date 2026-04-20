@@ -65,7 +65,7 @@ function AddPatient() {
                 <Heading text="Add Patient" />
                 <br /><br />
 
-                <Label>Name</Label>
+                <Label text={"Name"}/>
                 <br />
                 <Textbox
                     placeholder="Enter your Name"
@@ -75,7 +75,7 @@ function AddPatient() {
                 />
                 <br /><br />
 
-                <Label>Date of Birth</Label>
+                <Label text={"Date of Birth"}/>
                 <br />
                 <DateTextBox 
                     placeholder="Enter date of birth" 
@@ -88,7 +88,7 @@ function AddPatient() {
                 {/* <DateTextBox placeholder="Enter date of birth" /> */}
                 <br />
 
-                <Label>Gender</Label>
+                <Label text={"Gender"}/>
                 <br />
                 <DropDown
                     defaultValue="Select Gender"
@@ -97,7 +97,7 @@ function AddPatient() {
                 />
                 <br /><br />
 
-                <Label>NIC</Label>
+                <Label text={"NIC"}/>
                 <br />
                 <Textbox
                     placeholder="Enter your NIC"
@@ -106,7 +106,7 @@ function AddPatient() {
                 />
                 <br /><br />
 
-                <Label>Phone no</Label>
+                <Label text={"Phone no"}/>
                 <br />
                 <Textbox
                     placeholder="Enter your Phone no"
@@ -115,7 +115,7 @@ function AddPatient() {
                 />
                 <br /><br />
 
-                <Label>Address</Label>
+                <Label text={"Address"}/>
                 <br />
                 <Textbox
                     placeholder="Enter your Address"
@@ -124,7 +124,7 @@ function AddPatient() {
                 />
                 <br /><br />
 
-                <Label>Insurance Company</Label>
+                <Label text={"Insurance Company"}/>
                 <br />
                 <DropDown
                     defaultValue="Select Insurance Company"
@@ -133,7 +133,7 @@ function AddPatient() {
                 />
                 <br /><br />
 
-                <Label>Policy Number</Label>
+                <Label text={"Policy Number"}/>
                 <br />
                 <Textbox
                     placeholder="Policy Number"
@@ -142,7 +142,7 @@ function AddPatient() {
                 />
                 <br /><br />
 
-                <Label>Plane Type</Label>
+                <Label text={"Plane Type"}/>
                 <br />
                 <DropDown
                     defaultValue="Select Policy Plan"

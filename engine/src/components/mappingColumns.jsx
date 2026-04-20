@@ -11,7 +11,7 @@ export default function MappingColumns({FIELDS, checked, allChecked, toggle }) {
     });
     
     return (
-        <div className="p-3">
+        <div className="p-3 overflow-auto min-h-0 max-h-60 sm:max-h-80 md:max-h-100 lg:max-h-120">
             {Object.keys(fontendData)?.map((resource, index) => (
                 <div key={index}>
                     <p className="font-bold text-sm mb-2">{resource}</p>

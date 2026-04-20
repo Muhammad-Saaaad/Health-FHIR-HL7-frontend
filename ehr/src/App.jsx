@@ -4,6 +4,8 @@ import Home from './Screens/home.jsx';
 import AddPatient from './Screens/addPatient.jsx';
 import Signup from './Screens/signup.jsx';
 import Login from './Screens/login.jsx';
+import AddVisitNote from './Screens/AddVisitNote.jsx';
+import ViewPatient from './Screens/viewPatient.jsx';
 
 function App() {
 
@@ -15,6 +17,8 @@ function App() {
           <Route path='/login' element={<Login />} />
           <Route path='/home' element={<Home />} />
           <Route path='/ehr/add-patient' element={<AddPatient />} />
+          <Route path='/ehr/add-visit-note' element={<AddVisitNote />} />
+          <Route path='/ehr/view-patient' element={<ViewPatient />} />
         </Routes>
       </Router>
     </>

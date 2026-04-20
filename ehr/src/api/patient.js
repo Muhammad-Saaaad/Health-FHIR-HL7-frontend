@@ -10,6 +10,6 @@ export const get_patients = async () => {
 }
 
 export const reg_patient = async (payload) => {
-    const response = await api.post(`/patients`, payload);
+    const response = await api.post(`/patients`, payload, { timeout: 10000 });
     return response;
 }

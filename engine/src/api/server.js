@@ -4,7 +4,7 @@ export const api= axios.create({
     baseURL: import.meta.env.VITE_API_URL,
 });
 
-export const get_servers = async () => {
+export const get_servers = async () => { // error handling, 
     const response = await api.get(`/server/all-servers`);
     return response;
 };

@@ -28,11 +28,13 @@ export default function ChannelDetails() {
         }
     });
 
-    const { data: mappingData, isLoading: mappingLoading, isError: mappingError } = useQuery({
+    const { data: mappingData, isLoading: mappingLoading, isError: mappingError } = useQuery(
+        {
         queryKey: ["get_mappings", route?.route_id],
         queryFn: () => get_mappings(route?.route_id),
         enabled: !!route?.route_id,
-    });
+    }
+);
 
     // Format each rule as:  "src_name → dest1_name + dest2_name"
     const mappingLines = mappingData?.data?.map(rule => {
@@ -96,7 +98,7 @@ export default function ChannelDetails() {
                 </div>
 
                 <textarea
-                    className="border border-gray-500 rounded-2xl w-full h-40 p-3 text-sm text-gray-700 resize-none"
+                    className="border border-gray-500 rounded-2xl w-full min-h-50 max-h-100 p-3 text-sm text-gray-700 resize-none"
                     readOnly
                     value={mappingText}
                 />

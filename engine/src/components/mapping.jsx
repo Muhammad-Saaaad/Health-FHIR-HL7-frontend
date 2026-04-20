@@ -170,14 +170,16 @@ export default function Mapping({
 
             {/* Added mappings list */}
             {mappings.length > 0 && (
-                <div className="mt-4 flex flex-col gap-2">
+                <div className="mt-4 flex flex-col gap-2 overflow-y-auto max-h-90">
                     {mappings.map((line, i) => (
-                        <div key={i} className="flex items-center justify-between border-2 border-[#E8F3F1] rounded-2xl px-4 py-2">
-                            <span className="text-sm text-gray-600 font-semibold">{line.frontLine}</span>
+                        <div key={i} className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-2 border-[#E8F3F1] rounded-2xl px-4 py-2">
+                            <span className="min-w-0 flex-1 text-sm text-gray-600 font-semibold wrap-break-word">
+                                {line.frontLine}
+                            </span>
                             <button
                                 type="button"
                                 onClick={() => removeMapping(line)}
-                                className="bg-[#31486F] hover:bg-[#1e3352] text-white text-sm font-semibold px-4 py-1 rounded-full transition-colors"
+                                className="self-end sm:self-auto shrink-0 bg-[#31486F] hover:bg-[#1e3352] text-white text-sm font-semibold px-4 py-1 rounded-full transition-colors"
                             >
                                 Remove
                             </button>

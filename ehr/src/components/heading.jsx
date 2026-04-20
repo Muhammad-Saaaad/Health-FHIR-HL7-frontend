@@ -1,7 +1,26 @@
-function Heading(props){
-    let { text } = props;
+import { twMerge } from "tailwind-merge";
 
-    let element = <h1 className="text-5xl font-bold font-sans text-[#152F5B]">{text}</h1>;
+function Heading(props){
+    let { text, level, className } = props;
+
+    if (!level) {
+        level = 1;
+    }
+
+    let element;
+    switch (level) {
+        case 1:
+            element = <h1 className={twMerge("text-5xl font-bold font-sans text-[#152F5B]", className)}>{text}</h1>;
+            break;
+        case 2:
+            element = <h2 className={twMerge("text-4xl font-bold font-sans text-[#152F5B]", className)}>{text}</h2>;
+            break;
+        case 3:
+            element = <h3 className={twMerge("text-3xl font-bold font-sans text-[#152F5B]", className)}>{text}</h3>;
+            break;
+        default:
+            element = <h1 className={twMerge("text-5xl font-bold font-sans text-[#152F5B]", className)}>{text}</h1>;
+    }
     return element;
 }
 

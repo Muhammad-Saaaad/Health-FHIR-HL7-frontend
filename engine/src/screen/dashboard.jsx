@@ -16,10 +16,6 @@ export default function Dashboard() {
         queryFn: get_servers,
     });
 
-    console.log("is Loading -> ", isLoading);
-    console.log("is Error -> ", isError);
-    console.log("error -> ",error);
-
     const total_servers_connected = data?.data.length;
 
     return (

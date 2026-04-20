@@ -1,6 +1,10 @@
+import { twMerge } from 'tailwind-merge'
+
 const Label = (props) => {
-    let {children} = props;
-    return <label className="font-bold">{children}</label>
+    let {className, text} = props;
+    return <label className={twMerge("font-bold", className)}>
+        {text}
+    </label>
 };
 
 export default Label;

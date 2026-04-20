@@ -16,9 +16,9 @@ export default function Login() {
 
     const { mutate, isPending} = useMutation({
         mutationFn: login,
-        onSuccess: ()=> {
+        onSuccess: (response)=> {
             alert("Login Sucessfull");
-            navigate("/home");
+            navigate("/home", {state: response?.data});
         },
         onError: (error) =>{error_response(error, "Failed to Login")}
     });
@@ -29,7 +29,6 @@ export default function Login() {
             email: email,
             password: password
         });
-        console.log({ email, password });
     };
 
     return (

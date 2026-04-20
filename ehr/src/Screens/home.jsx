@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useLocation } from "react-router-dom";
 
 import { get_patients } from "../api/patient"
 import Textbox from "../components/textbox";
@@ -7,18 +8,14 @@ import Sidebar from "../components/sidebar";
 import Records from "../components/records"
 
 const Home = () => {
+
+  const location = useLocation();
+  const doctor = location?.state;
   
   const { data, isLoading, isError, error, status } = useQuery({
     queryKey: ['ehr_all_patients'],
     queryFn: get_patients
   });
-
-  console.log(data);
-  console.log( 'isloading', isLoading);
-  console.log('is error ', isError);
-  console.log('error', error);
-  console.log('status ', status);
-
   
   return (
     <div className="flex h-screen overflow-hidden">
@@ -49,7 +46,7 @@ const Home = () => {
 
             {/* Patient list */}
             {
-              !isLoading && !isError && <Records data={data?.data}></Records>
+              !isLoading && !isError && <Records data={data?.data} doctor_id={doctor?.doctor_id}></Records>
             }
             
           </div>
