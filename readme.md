@@ -4,8 +4,8 @@
 * tailwindcss `npm install tailwindcss @tailwindcss/vite` and then go to vite.config.js and add `tailwindcss()` in `plugin` list.
 * React Query | Tanstackquery for managing api calls instead of using manual (useState, useEffect, loading, error handling, caching, etc) `npm i @tanstack/react-query`
 * React Query Dev Tools `npm i @tanstack/react-query-devtools`
-* axios `npm install axios`
-* lucide-react `npm install lucide-react`
+* axios for calling API `npm install axios`
+* lucide-react for importing icons  `npm install lucide-react`
 * date picker `npm install react-datepicker`
 * tailwind-merge for overriding styles `npm install tailwind-merge`
 * concurrenetly for running all the servers at the same time `npm install concurrently --save-dev`

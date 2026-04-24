@@ -13,3 +13,8 @@ export const reg_patient = async (payload) => {
     const response = await api.post(`/patients`, payload, { timeout: 10000 });
     return response;
 }
+
+export const get_patient_detail = async (mpi) => {
+    const response = await api.get(`/patients/${mpi}`);
+    return response;
+}

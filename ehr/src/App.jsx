@@ -6,6 +6,7 @@ import Signup from './Screens/signup.jsx';
 import Login from './Screens/login.jsx';
 import AddVisitNote from './Screens/AddVisitNote.jsx';
 import ViewPatient from './Screens/viewPatient.jsx';
+import ViewNote from './Screens/viewNote.jsx'
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
           <Route path='/ehr/add-patient' element={<AddPatient />} />
           <Route path='/ehr/add-visit-note' element={<AddVisitNote />} />
           <Route path='/ehr/view-patient' element={<ViewPatient />} />
+          <Route path='/ehr/view-note' element={<ViewNote />} />
         </Routes>
       </Router>
     </>

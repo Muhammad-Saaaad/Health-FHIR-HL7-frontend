@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Home, ClipboardPlus, Bell, User, Menu, X } from "lucide-react";
 
-export default function Sidebar({ notificationCount = 2 }) {
+export default function Sidebar({ notificationCount = 0 }) {
     const [isOpen, setIsOpen] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
@@ -15,7 +15,7 @@ export default function Sidebar({ notificationCount = 2 }) {
     }, []);
 
     const menuItems = [
-        { icon: Home, label: 'Home', path: '/home' },
+        { icon: Home, label: 'Home', path: '/home', activePaths: ["/home", "/ehr/view-patient", "/ehr/add-visit-note", "/ehr/view-note"]}, // all routes that should highlight Home 
         { icon: ClipboardPlus, label: 'Add Patient', path: '/ehr/add-patient' },
         { icon: Bell, label: 'Notification', path: '/notifications', badge: notificationCount },
         { icon: User, label: 'Profile', path: '/profile' },
@@ -86,7 +86,9 @@ export default function Sidebar({ notificationCount = 2 }) {
                 <nav className="p-2 space-y-1">
                     {menuItems.map((item, index) => {
                         const Icon = item.icon;
-                        const isActive = location.pathname === item.path;
+                        const isActive = item.activePaths
+                            ? item.activePaths.some((p) => location.pathname.startsWith(p))
+                            : location.pathname === item.path;
 
                         return (
                             <button

@@ -8,7 +8,7 @@ import Heading from "../components/heading"
 import Label from "../components/label"
 import Textbox, { DateTextBox } from "../components/textbox"
 import Button from "../components/button"
-import DropDown from "../components/dropdown"
+import DropDown, { SearchDropDown } from "../components/dropdown"
 import Sidebar from "../components/sidebar"
 
 function AddPatient() {
@@ -126,8 +126,10 @@ function AddPatient() {
 
                 <Label text={"Insurance Company"}/>
                 <br />
-                <DropDown
-                    defaultValue="Select Insurance Company"
+                <SearchDropDown
+                    DefaultValueClassName="w-50"
+                    OptionsClassNames="w-50"
+                    defaultValue={patient.insurance_company || "Select Insurance"}  
                     options={["Star Insurance", "Jubliee"]}
                     onSelect={(val) => handleChange("insurance_company", val)}
                 />
