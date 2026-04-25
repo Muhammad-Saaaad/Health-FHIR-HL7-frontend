@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 
 import Home from './Screens/home.jsx';
 import AddPatient from './Screens/addPatient.jsx';
@@ -14,6 +14,7 @@ function App() {
     <>
       <Router>
         <Routes>
+          <Route path='/' element={<Navigate to='/login' replace />} />
           <Route path='/signup' element={<Signup />} />
           <Route path='/login' element={<Login />} />
           <Route path='/home' element={<Home />} />

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
 
 import Dashboard from "./screen/dashboard"
 import ServerDetails from "./screen/serverDetails"
@@ -16,6 +16,8 @@ function App() {
     <>
       <Router>
         <Routes>
+          <Route path="/" element={<Navigate to="/dashboard" replace/>} />
+
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
 
