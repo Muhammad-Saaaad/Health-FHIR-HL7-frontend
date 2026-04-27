@@ -15,3 +15,9 @@ export default function error_response(err, err_about){
 
     alert(`${err_about}: ${message} (Status: ${status})`);
 }
+
+let json_ = {
+    "hi": "hello"
+}
+console.log(JSON.stringify(json_))
+console.log(json_)

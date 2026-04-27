@@ -15,8 +15,8 @@ export default function Sidebar() {
     }, []);
 
     const menuItems = [
-        { icon: Home, label: 'Home', path: '/home'},
-        { icon: User, label: 'Profile', path: '/profile'},
+        { icon: Home, label: 'Home', path: '/home', activePaths: ['/home', '/view-doctor-details', '/view-note', '/view-report'] },
+        { icon: User, label: 'Profile', path: '/profile' },
     ];
 
     const handleNavigate = (path) => {
@@ -84,7 +84,11 @@ export default function Sidebar() {
                 <nav className="p-2 space-y-1">
                     {menuItems.map((item, index) => {
                         const Icon = item.icon;
-                        const isActive = location.pathname === item.path;
+                        const isActive = item.activePaths // we just chnage the previous active line to this one.
+                            ? item.activePaths.some((path) =>
+                                location.pathname === path || location.pathname.startsWith(`${path}/`)
+                            )
+                            : location.pathname === item.path;
 
                         return (
                             <button

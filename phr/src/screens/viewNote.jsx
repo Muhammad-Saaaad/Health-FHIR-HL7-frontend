@@ -34,6 +34,12 @@ export default function ViewNote() {
             lab_test_names.push(report.test_name);
         }
     })
+    let lab_names = []
+    lab_report_detail?.map((report) => {
+        if (report?.lab_name){
+            lab_names.push(report.lab_name);
+        }
+    });
 
     function submitClaim(){
         console.log("Claim submitted for note id: ", state?.note_id);
@@ -52,11 +58,15 @@ export default function ViewNote() {
                     </div>
                     <div>
                         <Label className="text-[#32496F]" text="Diagnosis: " />
-                        <Label className="text-[#7A7979] font-normal" text={(!isLoading && !isError && note_detail?.dignosis)} />
+                        <Label className="text-[#7A7979] font-normal" text={(!isLoading && !isError && note_detail?.diagnosis)} />
                     </div>
                     <div>
                         <Label className="text-[#32496F]" text="Consultation Notes: " />
                         <Label className="text-[#7A7979] font-normal" text={(!isLoading && !isError && note_detail?.note_details)} />
+                    </div>
+                    <div>
+                        <Label className="text-[#32496F]" text="Lab Name: " />
+                        <Label className="text-[#7A7979] font-normal" text={(!isLoading && !isError && lab_names.join(", "))} />
                     </div>
                     <div>
                         <Label className="text-[#32496F]" text="Lab Tests: " />
@@ -68,28 +78,13 @@ export default function ViewNote() {
                     </div>
                     <div>
                         <Label className="text-[#32496F]" text="Bill Status: " />
-                        <Label className="text-[#7A7979] font-normal" text={(!isLoading && !isError && note_detail?.bill_status)} />
+                        <Label className="text-[#7A7979] font-normal" text={(!isLoading && !isError && note_detail?.payment_status)} />
                     </div>
                 </div>
 
                 <div className="border-2 rounded-2xl border-[#7A7979] h-80 p-1">
                     
                     {(!isLabReportsLoading && !isLabReportsError) && <LabReports data={lab_report_detail} />}
-                </div>
-
-                <br />
-                <div>
-                    <Label text="Total Lab Charges" />
-                    <Textbox type="number" readOnly={true} value={!isLoading && !isError && note_detail?.lab_bill} />
-                    <br />
-                    <Label text="Total Bill Amount" />
-                    <Textbox type="number" readOnly={true} value={!isLoading && !isError && note_detail?.total_bill} />
-                </div>
-
-                <br />
-
-                <div className="flex justify-center">
-                    <Button text="Submit Claim" className="w-50" onClick={submitClaim} />
                 </div>
 
                 <br />

@@ -1,8 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 
-import { get_doctors } from "../api/doctor"
+import { get_doctors_for_patient } from "../api/doctor"
 import Textbox from "../components/textbox";
 import Heading, { LowerHeading } from "../components/heading";
 import Sidebar from "../components/sidebar";
@@ -10,9 +9,13 @@ import Records from "../components/records"
 
 const Home = () => {
   
+  const user = JSON.parse(localStorage.getItem("user"));
+
   const { data, isLoading, isError, error, status } = useQuery({
-    queryKey: ['phr_all_doctors'],
-    queryFn: get_doctors,
+    queryKey: ['phr_all_doctors_by_patient', user?.mpi],
+    queryFn: () => get_doctors_for_patient(user?.mpi),
+    enabled: Boolean(user?.mpi),
+    // retry: false, // Disable automatic retries on failure
   });
   
   const [records, setRecords] = useState();
@@ -24,6 +27,8 @@ const Home = () => {
     }
   }, [data, status])
 
+  console.log(data);
+
   function searchValue(event){
     const value = event.target.value;
     if (value === ""){
@@ -33,9 +38,6 @@ const Home = () => {
     }
     setSearchRecords(records?.filter(item => item?.name?.includes(value) ));
   }
-
-  const location = useLocation();
-  const user = location.state;
   
   return (
     <div className="flex h-screen overflow-hidden">

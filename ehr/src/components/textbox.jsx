@@ -6,14 +6,16 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Calendar } from "lucide-react";
 
 export const Textbox = (props) => {
-    let {placeholder, type, className, onChange} = props;
-
-    type = type ? type : "text";
+    const {placeholder, type = "text", value, readOnly = false, className, required, onChange} = props;
+    const isRequired = required ?? true;
 
     return <input 
         type={type} 
         className={twMerge("border-2 border-[#E8F3F1] rounded-2xl w-full h-12 p-4", className)}
         placeholder={placeholder}
+        value={value}
+        readOnly={readOnly}
+        required={isRequired}
         onChange={onChange}
     />
 };

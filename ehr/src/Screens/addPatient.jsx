@@ -120,6 +120,7 @@ function AddPatient() {
                 <Textbox
                     placeholder="Enter your Address"
                     value={patient.address}
+                    required={false}
                     onChange={(e) => handleChange("address", e.target.value)}
                 />
                 <br /><br />
@@ -152,8 +153,13 @@ function AddPatient() {
                     onSelect={(val) => handleChange("plan_type", val)}
                 />
                 <br /><br /><br />
-
-                <Button text={isPending ? "Saving..." : "Save"} disabled={isPending} />
+                <div className="flex justify-center">
+                    <Button 
+                        text={isPending ? "Saving..." : "Save"} 
+                        type="submit" 
+                        disabled={isPending} 
+                    />
+                </div>
             </form>
         </main>
     </div>

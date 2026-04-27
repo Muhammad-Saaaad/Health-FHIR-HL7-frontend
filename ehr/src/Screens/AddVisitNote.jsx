@@ -20,6 +20,7 @@ export default function AddVisitNote() {
     const mpi = location.state?.mpi;
     const doctor_id = localStorage.getItem("doctor_id");
 
+    // const [selectedTest, setSelectedTest] = useState([]);
     const [note, setNote] = useState({
         mpi: mpi,
         doctor_id: doctor_id,
@@ -28,7 +29,7 @@ export default function AddVisitNote() {
         patient_complaint: "",
         dignosis: "",
         note_details: "",
-        bill_amount: 0,
+        bill_amount: "",
         lab_name: "",
         test_names: []
     });
@@ -47,8 +48,12 @@ export default function AddVisitNote() {
         setNote(prev => ({ ...prev, [field]: value }));
     };
 
-    const handleSaveNote = () => {
-        console.log(note);
+    const handleSaveNote = (e) => {
+        e.preventDefault();
+        mutate({
+            ...note,
+            bill_amount: Number(note.bill_amount)
+        });
     }
 
     return (
@@ -58,6 +63,7 @@ export default function AddVisitNote() {
             <Heading text="Visiting Notes" />
             <br /><br />
 
+            <form onSubmit={handleSaveNote}>
             <Label text={"Note Title"}/>
             <br />
             <Textbox
@@ -92,20 +98,21 @@ export default function AddVisitNote() {
                 className="border-2 border-[#E8F3F1] rounded-2xl p-2 w-full h-32" 
                 placeholder="Enter Consultation Notes" 
                 value={note.note_details} 
+                required={false}
                 onChange={(e) => handleChange("note_details", e.target.value)} 
             />
             <br /><br />
 
             <hr />
 
-            <div className="flex items-start justify-between mt-5">
+            <div className="flex items-center justify-between mt-5">
         
                 <div>
                     <Label text={"Lab Tests"}/>
                     <br />
                     <SearchDropDown
-                        DefaultValueClassName="w-50"
-                        OptionsClassNames="w-50"
+                        DefaultValueClassName="w-30 sm:w-50"
+                        OptionsClassNames="w-30 sm:w-50"
                         defaultValue={"Select Lab"}
                         options={["IDC", "MIR"]}
                         onSelect={(val) => handleChange("lab_name", val)}
@@ -120,13 +127,30 @@ export default function AddVisitNote() {
                 </p>
             </div>
             <br />
-            { showAddLab && <LabTestSearchResults data={note.test_names} /> }
-
+            {showAddLab && (
+                <LabTestSearchResults
+                    selectedTest={note.test_names}
+                    onChangeSelectedTest={(tests) => handleChange("test_names", tests)}
+                />
+            )}
+            
+             <br />
             <hr />
+            <br />
+
+            <Label text={"Bill Amount"}/>
+            <br />
+            <Textbox
+                type="number"
+                placeholder="Enter Amount"
+                value={note.bill_amount}
+                onChange={(e) => handleChange("bill_amount", e.target.value)}
+            />
 
             <div className="flex justify-center items-center my-5">
-                <Button text="Save" onClick={handleSaveNote} />
+                <Button type="submit" text="Save" />
             </div>
+            </form>
         </main>
     </div>
     );

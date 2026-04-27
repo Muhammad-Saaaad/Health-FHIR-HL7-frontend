@@ -1,7 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronRight, FileText } from "lucide-react";
+
 import { visit_note_by_doctor_per_patient } from "../api/visit_note";
+import { SearchDropDown } from "../components/dropdown"; 
 
 export default function Records({data}) {
   const navigate = useNavigate();
@@ -102,7 +104,9 @@ export function Notes({mpi}){
 }
 
 export function LabReports({data: LabData}){
-  console.log("LabData in LabReports component: ", LabData);
+
+  const navigate = useNavigate(); 
+
   return(
     <div className="h-full space-y-3 overflow-y-auto pr-1 md:pr-2 [scrollbar-gutter:stable]">
       {LabData.map((item, index) => (
@@ -130,8 +134,18 @@ export function LabReports({data: LabData}){
               </p>
             </div>
           </div>
-
-          <ChevronRight className="shrink-0 h-6 w-6 text-[#7A7979]" />
+          
+          {
+            (item?.test_status === "Rejected" || item?.test_status === "rejected") ? <SearchDropDown
+                DefaultValueClassName="w-30 sm:w-50 shirnk-0"
+                OptionsClassNames="w-30 sm:w-50 shirnk-0"
+                defaultValue={"Change Lab"}
+                options={["IDC", "MIR"]}
+                // onSelect={(val) => handleChange("lab_name", val)}
+            /> 
+            : <ChevronRight className="shrink-0 h-6 w-6 text-[#7A7979]" />
+          }
+          
         </div>
       ))}
     </div>
