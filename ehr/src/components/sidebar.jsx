@@ -17,7 +17,7 @@ export default function Sidebar({ notificationCount = 0 }) {
     const menuItems = [
         { icon: Home, label: 'Home', path: '/home', activePaths: ["/home", "/ehr/view-patient", "/ehr/add-visit-note", "/ehr/view-note", "/ehr/view-report"]}, // all routes that should highlight Home 
         { icon: ClipboardPlus, label: 'Add Patient', path: '/ehr/add-patient' },
-        { icon: Bell, label: 'Notification', path: '/notifications', badge: notificationCount },
+        // { icon: Bell, label: 'Notification', path: '/notifications', badge: notificationCount },
         { icon: User, label: 'Profile', path: '/profile' },
     ];
 

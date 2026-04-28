@@ -11,3 +11,13 @@ export async function get_patients() {
     return response    
 }
 
+export async function get_patient_waiting_list() {
+    const response = await api.get("/patient-waiting-list");
+    return response;
+}
+
+export async function get_patient_accepted_list() {
+    const response = await api.get("/patient-Accepted-list");
+    return response;
+}
+

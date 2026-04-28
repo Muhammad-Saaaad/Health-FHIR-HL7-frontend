@@ -27,7 +27,7 @@ export default function Records({data}){
                         phone_no: {item?.phone_no == null || String(item?.phone_no).toLowerCase() === "none" ? "" : item?.phone_no}
                       </p>
                       <p className="opacity-40">last visit: {item.last_visit.split("T")[0]}</p>
-                      <p className="opacity-60 font-bold">speclization: {item.speclization}</p>
+                      <p className="opacity-60 font-bold">speclization: {item.specialization}</p>
                     </div>
                   </div>
                 </div>

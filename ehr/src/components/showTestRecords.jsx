@@ -53,7 +53,7 @@ export default function LabTestSearchResults({ selectedTest: initialSelectedTest
 
     return (
         <div>
-            <Textbox placeholder="Select lab test..." onChange={event => handleSearchReport(event.target.value)} />
+            <Textbox required={false} placeholder="Select lab test..." onChange={event => handleSearchReport(event.target.value)} />
             
             <br /><br />
             {

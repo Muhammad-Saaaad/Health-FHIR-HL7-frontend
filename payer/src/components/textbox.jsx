@@ -15,10 +15,10 @@ const Textbox = (props) => {
     }
     
     return (
-        <div className="flex items-center border-2 border-[#E8F3F1] rounded-2xl w-50 h-7 sm:w-70 lg:w-100 md:h-12 p-4">
+        <div className="flex w-70 max-w-full sm:w-110 md:w-120 lg:w-130 border-2 border-[#E8F3F1] rounded-2xl p-4">
             <input 
                 type="text"
-                className={twMerge("flex-1 outline-none w-full", className)}
+                className={twMerge("flex-1 outline-none w-full h-4", className)}
                 placeholder={placeholder}
                 value={value}
                 onChange={onChange}

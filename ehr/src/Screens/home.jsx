@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { User } from "lucide-react";
 
 import { get_patients } from "../api/patient"
 import Textbox from "../components/textbox";
@@ -23,8 +24,10 @@ const Home = () => {
           <div className="mx-2 bg-[#8cd7f5] mb-5">
             <div className=" flex items-center justify-between gap-3">
 
-              <div className="flex flex-col ">
-                <img src="icons/main/Dr_Sana.png" alt="Doctor"className="w-20 h-20 mb-2"/>
+              <div className="flex flex-col items-center">
+                <div className="h-20 w-20 mb-2 flex items-center justify-center rounded-full bg-[#E9F1FF] text-[#2F6BFF]">
+                  <User className="h-12 w-12" />
+                </div>
                 <p className=" inline-block font-bold text-[#152F5B]">Welcome!</p>
               </div>
 

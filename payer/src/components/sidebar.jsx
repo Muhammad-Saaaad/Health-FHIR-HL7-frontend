@@ -15,9 +15,9 @@ export default function Sidebar() {
     }, []);
 
     const menuItems = [
-        { icon: Home, label: 'Home', path: '/home' },
-        { icon: Mail, label: 'Pending Claims', path: '/pending-claims' },
-        { icon: ClipboardPlus, label: 'Add Customer', path: '/add-customer' },
+        { icon: Home, label: 'Home', path: '/home' , activePaths: ["/home", "/view-customer"]}, // all routes that should highlight Home
+        { icon: Mail, label: 'Pending Claims', path: '/all-pending-claims', activePaths: ["/all-pending-claims", "/claim"] },
+        { icon: ClipboardPlus, label: 'Add Customer', path: '/add-customer', activePaths:["/add-customer"] },
     ];
 
     const handleNavigate = (path) => {
@@ -85,7 +85,9 @@ export default function Sidebar() {
                 <nav className="p-2 space-y-1">
                     {menuItems.map((item, index) => {
                         const Icon = item.icon;
-                        const isActive = location.pathname === item.path;
+                        const isActive = item.activePaths
+                            ? item.activePaths.some((p) => location.pathname.startsWith(p))
+                            : location.pathname === item.path;
 
                         return (
                             <button

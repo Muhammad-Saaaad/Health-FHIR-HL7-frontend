@@ -8,6 +8,7 @@ import AddVisitNote from './Screens/AddVisitNote.jsx';
 import ViewPatient from './Screens/viewPatient.jsx';
 import ViewNote from './Screens/viewNote.jsx'
 import ViewReport from './Screens/viewReport.jsx';
+import Profile from './Screens/profile.jsx';
 
 function App() {
 
@@ -25,6 +26,7 @@ function App() {
           <Route path='/ehr/view-patient' element={<ViewPatient />} />
           <Route path='/ehr/view-note' element={<ViewNote />} />
           <Route path='/ehr/view-report' element={<ViewReport />} />
+          <Route path='/profile' element={<Profile />} />
         </Routes>
       </Router>
     </>

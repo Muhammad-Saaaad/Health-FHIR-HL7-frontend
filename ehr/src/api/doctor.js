@@ -12,3 +12,8 @@ export const login = async (payload) => {
     const response = await api.post('/login', payload);
     return response;
 };
+
+export const get_doctor = async (doc_id) => {
+    const response = await api.get(`/get-doctor/${doc_id}`);
+    return response;
+};

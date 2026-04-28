@@ -59,7 +59,7 @@ export default function AddCustomer() {
 
                 <div className="grid grid-cols-3 md:grid-cols-6 gap-y-5 sm:gap-y-7 lg:gap-y-10 mt-5 sm:mt-7 lg:mt-10">
                     <div className="flex items-center lg:justify-center">
-                        <Label>Customer</Label>
+                        <Label text="Customer" />
                     </div>
                     <div className="col-span-2 flex justify-center items-center">
                         <Textbox
@@ -69,7 +69,7 @@ export default function AddCustomer() {
                     </div>
 
                     <div className="flex items-center md:justify-center lg:justify-center">
-                        <Label>Date of Birth</Label>
+                        <Label text="Date of Birth" />
                     </div>
                     <div className="col-span-2 flex justify-center items-center md:justify-end lg:justify-start">
                         <DateTextBox
@@ -79,7 +79,7 @@ export default function AddCustomer() {
                     </div>
 
                     <div className="flex items-center lg:justify-center">
-                        <Label>Phone-No</Label>
+                        <Label text="Phone-No" />
                     </div>
                     <div className="col-span-2 flex justify-center items-center">
                         <Textbox
@@ -90,7 +90,7 @@ export default function AddCustomer() {
                     </div>
 
                     <div className="flex items-start md:justify-center md:mt-3 lg:justify-center">
-                        <Label>Gender</Label>
+                        <Label text="Gender" />
                     </div>
                     <div className="col-span-2 flex justify-center lg:justify-start items-center space-x-8">
                         <RadioButton
@@ -101,7 +101,7 @@ export default function AddCustomer() {
                     </div>
 
                     <div className="flex items-start col-span-2 lg:justify-center lg:col-span-2 md:col-span-1">
-                        <Label>Insurance Plan Type</Label>
+                        <Label text="Insurance Plan Type" />
                     </div>
                     <div className="col-span-3 flex justify-center lg:justify-start items-center space-x-8">
                         <RadioButton
@@ -116,7 +116,12 @@ export default function AddCustomer() {
 
                 <div className="flex justify-center space-x-10 md:space-x-20 lg:space-x-40">
                     <Button className="w-40 bg-gray-200 text-[#202020]" text="Cancel" type="button" />
-                    <Button className="w-40" text={isPending ? "Submitting..." : "Submit Claim"} disabled={isPending} />
+                    <Button 
+                        className="w-40" 
+                        text={isPending ? "Submitting..." : "Submit Claim"} 
+                        disabled={isPending}
+                        type="submit"
+                    />
                 </div>
             </form>
         </div>

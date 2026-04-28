@@ -16,9 +16,9 @@ export default function Login() {
 
     const { mutate, isPending} = useMutation({
         mutationFn: login,
-        onSuccess: ()=> {
-            alert("Login Sucessfull");
+        onSuccess: (res)=> {
             navigate("/home");
+            localStorage.setItem("user_id", res?.data?.user_id);
         },
         onError: (error) =>{error_response(error, "Failed to Login")}
     });

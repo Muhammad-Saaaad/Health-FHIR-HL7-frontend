@@ -1,4 +1,8 @@
+import { useNavigate } from "react-router-dom";
+import { ChevronRight } from "lucide-react";
+
 export default function Records({data}){
+    const navigate = useNavigate();
 
     return(
         <div className="grid grid-cols-12 mt-5 gap-x-5">
@@ -6,7 +10,17 @@ export default function Records({data}){
           data?.map((item, index) => ( // every column will have its own grid
             <div 
               key={index} 
-              className="border-2 border-[#828181] rounded-2xl col-span-12 sm:col-span-6 lg:col-span-4 grid grid-cols-12 my-1 sm:my-3 "
+              className="border-2 border-[#828181] rounded-2xl col-span-12 sm:col-span-6 lg:col-span-4 grid grid-cols-12 my-1 sm:my-3 cursor-pointer transition-colors hover:bg-slate-50 "
+              onClick={() => {
+                navigate(`/patient/${item.mpi}`, {
+                  state: {
+                    mpi: item.mpi,
+                    fname: item.fname,
+                    lname: item.lname,
+                    updated_at: item.updated_at,
+                  },
+                });
+              }}
             >
                 <div className="col-span-11" >
                   <div className="flex space-x-5 items-center">
@@ -22,9 +36,7 @@ export default function Records({data}){
                 </div>
 
                 <div className="flex justify-start items-center col-span-1">
-                  <button type="button">
-                    <img src="/icons/main/go_arrow.png" alt=">" className="h-5 w-3" />
-                  </button>
+                  <ChevronRight className="h-6 w-6 text-[#7A7979]" />
                 </div> 
              </div>           
           ))

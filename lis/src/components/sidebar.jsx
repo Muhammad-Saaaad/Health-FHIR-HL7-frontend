@@ -15,9 +15,9 @@ export default function Sidebar() {
     }, []);
 
     const menuItems = [
-        { icon: Home, label: 'Home', path: '/home' },
-        { icon: FlaskConical, label: 'Lab Test', path: '/lab-test' },
-        { icon: Ruler, label: 'Record', path: '/record' },
+        { icon: Home, label: 'Home', path: '/home', activePaths: ['/home', '/pending-list', '/pending-test/'] },
+        { icon: FlaskConical, label: 'Lab Test', path: '/lab-test', activePaths: ['/lab-test', '/lab-result/'] },
+        { icon: Ruler, label: 'Record', path: '/records', activePaths: ['/records', '/patient/', '/view-report/'] },
     ];
 
     const handleNavigate = (path) => {
@@ -85,7 +85,9 @@ export default function Sidebar() {
                 <nav className="p-2 space-y-1">
                     {menuItems.map((item, index) => {
                         const Icon = item.icon;
-                        const isActive = location.pathname === item.path;
+                        const isActive = item.activePaths
+                            ? item.activePaths.some((path) => location.pathname.startsWith(path))
+                            : location.pathname === item.path;
 
                         return (
                             <button
