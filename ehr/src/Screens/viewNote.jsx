@@ -1,7 +1,9 @@
 import { useLocation } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 
 import { specific_visit_note, specific_lab_reports_for_visit_note } from "../api/visit_note";
+import error_response from "../api/error_response";
+import { submit_claim } from "../api/claims";
 import Sidebar from "../components/sidebar";
 import Heading from "../components/heading"
 import Label from "../components/label";
@@ -14,7 +16,7 @@ export default function ViewNote() {
     const location = useLocation();
     const state = location.state;
 
-    const { data: note_detail, isLoading, isError, error, status} = useQuery({
+    const { data: note_detail, isLoading, isError, error, status, refetch: refetch_specific_note} = useQuery({
         queryKey: ["specific_visit_note", state?.note_id],
         queryFn: () => specific_visit_note(state?.note_id),
         enabled: Boolean(state?.note_id),
@@ -35,8 +37,27 @@ export default function ViewNote() {
         }
     })
 
+    const { mutate: submitClaimMutation, isPending } = useMutation({
+        mutationFn: submit_claim,
+        onSuccess: () => {
+            refetch_specific_note(state?.note_id);
+            console.log("Claim submitted successfully:");
+        },
+        onError: (error) => {
+            error_response(error, "Failed to submit claim");
+        }
+    });
+
     function submitClaim(){
-        console.log("Claim submitted for note id: ", state?.note_id);
+        const payload = {
+            "vid": state?.note_id,
+            "mpi": note_detail?.mpi,
+            "service_included": true,
+            "lab_included": lab_test_names.length > 0,
+            "total_fee": note_detail?.total_bill,
+        }
+        console.log("Submitting claim with payload:", payload);
+        submitClaimMutation(payload);
     }
 
     return (
@@ -89,7 +110,7 @@ export default function ViewNote() {
                 <br />
 
                 <div className="flex justify-center">
-                    <Button text="Submit Claim" className="w-50" onClick={submitClaim} />
+                    <Button text={isPending ? "Submitting..." : "Submit Claim"} className="w-50" onClick={submitClaim} disabled={isPending} />
                 </div>
 
                 <br />

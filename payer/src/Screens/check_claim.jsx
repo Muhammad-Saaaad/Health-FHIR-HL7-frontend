@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
@@ -11,18 +11,11 @@ import Button from "../components/button";
 
 export default function CheckClaim() {
     const navigate = useNavigate();
-    const { claimId } = useParams(); // useParams is a hook that allows us to access the parameters in the URL, here we are accessing the claimId parameter that we defined in the App.jsx file.
+    const { claimId } = useParams();
 
     const userid = localStorage.getItem("user_id");
-    useEffect(() => {
-        const invalidUser = userid === null || userid === "" || userid === "undefined" || userid === "null";
-
-        if (invalidUser) {
-            localStorage.clear();
-            alert("User not logged in. Please log in to continue.");
-            navigate("/login");
-        } 
-    }, [userid, navigate])
+    const currentValuesRef = useRef({ userid, claimId });
+    const isFirstUnmountRef = useRef(true);
 
     const { mutateAsync: unlock_claim_mutate } = useMutation({
         mutationFn: ({ claimId, userId }) => unlock_claim(claimId, userId),
@@ -32,7 +25,7 @@ export default function CheckClaim() {
     });
 
     const { mutateAsync: change_claim_status_mutate } = useMutation({
-        mutationFn: ({ claimId, status }) => change_claim_status(claimId, status),
+        mutationFn: ({ claimId, status, userId }) => change_claim_status(claimId, status, userId),
         onError: (err) => {
             error_response(err, "Failed to update claim status");
         }
@@ -44,6 +37,33 @@ export default function CheckClaim() {
         enabled: Boolean(claimId)
     });
 
+    useEffect(() => {
+        const invalidUser = userid === null || userid === "" || userid === "undefined" || userid === "null";
+
+        if (invalidUser) {
+            localStorage.clear();
+            alert("User not logged in. Please log in to continue.");
+            navigate("/login");
+        } 
+    }, [userid, navigate]);
+
+    useEffect(() => {
+        return () => {
+            if (!isFirstUnmountRef.current) {
+                const { userid: currentUserId, claimId: currentClaimId } = currentValuesRef.current;
+                if (currentUserId && currentClaimId) {
+                    console.log("Unlocking claim on unmount:", currentClaimId);
+                    unlock_claim(currentClaimId, currentUserId).catch(() => {});
+                }
+            }
+            isFirstUnmountRef.current = false;
+        };
+    }, []);
+
+    useEffect(() => {
+        currentValuesRef.current = { userid, claimId };
+    }, [userid, claimId]);
+
     async function handleStatus(status) {
         const invalidUser = userid === null || userid === "" || userid === "undefined" || userid === "null";
         if (invalidUser) {
@@ -52,13 +72,13 @@ export default function CheckClaim() {
             navigate("/login");
             return;
         }
-        if (status !== "Approved" && status !== "Reject") {
-            alert("Invalid status. Please select either 'Approved' or 'Reject'.");
+        if (status !== "Approved" && status !== "Rejected") {
+            alert("Invalid status. Please select either 'Approved' or 'Rejected'.");
             return;
         }
 
         try {
-            await change_claim_status_mutate({ claimId, status });
+            await change_claim_status_mutate({ claimId, status, userId: userid });
             console.log(`Claim status changed to ${status} successfully!`);
             await unlock_claim_mutate({ claimId, userId: userid });
             alert(`Claim ${status} successfully!`);
@@ -121,7 +141,7 @@ export default function CheckClaim() {
                     <Button
                         type="Submit"
                         className="bg-[#6F7683]  font-bold active:bg-[#505257]"
-                        onClick={() => handleStatus("Reject")}
+                        onClick={() => handleStatus("Rejected")}
                         text="Reject"
                     />
                 </div>

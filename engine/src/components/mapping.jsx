@@ -36,7 +36,8 @@ export default function Mapping({
             srcChecked.map(f => f.endpoint_field_id), 
             destChecked.map(f => f.endpoint_field_id)
         ),
-        enabled: false
+        enabled: false,
+        retry: false
     });
     
     const toggleSrc = (field) =>{ // if field is already in checked list, remove it, otherwise add it.

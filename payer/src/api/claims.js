@@ -24,7 +24,7 @@ export async function unlock_claim(claim_id, user_id) {
     return response.data;
 }
 
-export async function change_claim_status(claim_id, status) {
-    const response = await api.put(`/change_claim_status${claim_id}/${status}`);
+export async function change_claim_status(claim_id, status, user_id) {
+    const response = await api.put(`/change_claim_status${claim_id}/${status}/user/${user_id}`);        
     return response.data;
 }

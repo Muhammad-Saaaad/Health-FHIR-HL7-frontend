@@ -80,8 +80,12 @@ function AddPatient() {
                 <DateTextBox 
                     placeholder="Enter date of birth" 
                     onChange={(date) => {
-                        // only get the date, then formate it to yyyy-mm-dd
-                        const formattedDate = date.toLocaleDateString().split('/').reverse().join('-');
+                        // Format date to yyyy-mm-dd
+                        const year = date.getFullYear();
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const day = String(date.getDate()).padStart(2, '0');
+                        const formattedDate = `${year}-${month}-${day}`;
+                        console.log("Selected date:", formattedDate);
                         handleChange("date_of_birth", formattedDate);
                     }}
                 />

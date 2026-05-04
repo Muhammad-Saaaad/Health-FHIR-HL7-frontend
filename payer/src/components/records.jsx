@@ -140,47 +140,72 @@ export function ExpenseBreakdown({patientId, policy_id}) {
         queryFn: () => expense_breakdown(patientId, policy_id),
         enabled: Boolean(patientId && policy_id)
     });
+
+  if (isLoading) {
+    return (
+      <div className="mt-5 rounded-2xl border border-dashed border-slate-300 bg-white/80 p-6 text-center text-slate-500 shadow-sm">
+        Loading expense breakdown...
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="mt-5 rounded-2xl border border-red-200 bg-red-50 p-6 text-center text-red-700 shadow-sm">
+        {error?.message || "Unable to load expense breakdown."}
+      </div>
+    );
+  }
    
   return(
-      <div className="grid grid-cols-12 mt-5 gap-x-5">
+      <div className="mt-5 grid grid-cols-12 gap-4">
       {
         data?.map((item, index) => {
 
-            let color_status = "text-green-500"
-            if (item.status === 'Inactive') {
-                color_status = "text-red-500"
-            }
+            const isInactive = item.status === "Rejected";
+            const statusClass = isInactive
+              ? "border-red-200 bg-red-50 text-red-700"
+              : "border-emerald-200 bg-emerald-50 text-emerald-700";
 
             // you should add the key to the parent container instead of child containers.
-            return <div key={index} className="m-2 border-2 border-gray-400 rounded-lg px-2 py-1 shadow-lg">
-                <div className="font-extrabold text-[#152F5B] text-xl text-start">
-                    {item.claim_date}
-                </div>
-                <hr />
-
-                <div className="flex justify-between mt-1">
-                    <div>
-                        <div>
-                            <p className="font-bold inline-block text-lg">Service:</p>
-                            {" "+item.service_included ? "Included" : "Not Included"}
-                        </div>
-                        <div>
-                            <p className="font-bold inline-block text-lg">Tests:</p>
-                            {" "+item.tests_included ? "Included" : "Not Included"}
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <div>
-                           <p className="font-bold inline-block text-lg">Tests:</p>
-                           <p> {" "+item.total_amount} </p>
-                          </div>
-                          <div>
-                           <p className={twMerge("font-bold", color_status)}> {+item.status} </p>
-                          </div>
-                        </div>
+            return (
+              <div
+                key={index}
+                className="col-span-12 rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_10px_30px_rgba(15,23,42,0.08)] transition-transform duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_40px_rgba(15,23,42,0.12)] sm:col-span-6 lg:col-span-4"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                      Claim Date
+                    </p>
+                    <div className="mt-1 text-lg font-extrabold text-[#152F5B]">
+                      {item.claim_date}
                     </div>
+                  </div>
+
+                  <span className={twMerge("rounded-full border px-3 py-1 text-xs font-semibold", statusClass)}>
+                    {item.status}
+                  </span>
                 </div>
 
-            </div>
+                <div className="mt-4 space-y-3 border-t border-slate-100 pt-4 text-sm text-slate-600">
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="font-semibold text-slate-700">Service</span>
+                    <span>{item.service_included ? "Included" : "Not Included"}</span>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="font-semibold text-slate-700">Tests</span>
+                    <span>{item.tests_included ? "Included" : "Not Included"}</span>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-4 rounded-xl bg-slate-50 px-3 py-2">
+                    <span className="font-semibold text-slate-700">Total Amount</span>
+                    <span className="text-base font-bold text-slate-900">{item.total_amount}</span>
+                  </div>
+                </div>
+              </div>
+            )
         })
       }
 

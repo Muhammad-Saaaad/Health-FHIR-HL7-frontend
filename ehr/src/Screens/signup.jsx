@@ -18,7 +18,6 @@ export default function SignUp() {
     const { mutate, isPending} = useMutation({
         mutationFn: signup,
         onSuccess: () => {
-            alert("SignUp Completed");
             navigate("/login");
         },
         onError: (error)=>{error_response(error, "Failed to SignUP")}
@@ -32,8 +31,6 @@ export default function SignUp() {
             email: email,
             password: password
         });
-
-        console.log({name, email, password });
     };
 
     return (
