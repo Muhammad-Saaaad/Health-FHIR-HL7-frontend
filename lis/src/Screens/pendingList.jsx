@@ -1,8 +1,7 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
 import { get_patient_waiting_list } from "../api/home";
-import { lock_test_request } from "../api/patient";
 import Sidebar from "../components/sidebar";
 import Heading from "../components/heading";
 import Textbox from "../components/textbox";
@@ -16,24 +15,23 @@ export default function PendingList() {
         queryFn: get_patient_waiting_list,
     });
 
-    const { mutate: handleLockAndOpen } = useMutation({
-        mutationFn: ({ testReqId, mpi, vid, fname, lname }) => lock_test_request(testReqId, userId),
-        onSuccess: (_response, variables) => {
-            navigate(`/pending-test/${variables.mpi}/${variables.vid}`, {
-                state: {
-                    mpi: variables.mpi,
-                    vid: variables.vid,
-                    fname: variables.fname,
-                    lname: variables.lname,
-                    test_req_id: variables.testReqId,
-                },
-            });
-        },
-        onError: (err) => {
-            console.error("Failed to lock tests:", err);
-            alert("Unable to open this patient because the lock request failed.");
-        },
-    });
+    const handleOpen = (item) => {
+        if (!userId) {
+            alert("Please log in again before opening a patient.");
+            return;
+        }
+
+        // Locking disabled; open the record directly.
+        navigate(`/pending-test/${item?.nic}/${item?.vid}`, {
+            state: {
+                nic: item?.nic,
+                vid: item?.vid,
+                fname: item?.fname,
+                lname: item?.lname,
+                test_req_id: item?.test_req_id,
+            },
+        });
+    };
 
     const pendingPatients = data?.data ?? [];
 
@@ -51,7 +49,7 @@ export default function PendingList() {
 
                     <div className="col-start-3 flex items-start justify-end">
                         <CustomDropDown
-                            options={["Name", "MPI"]}
+                            options={["Name", "NIC"]}
                             defaultValue="Search by"
                             onSelect={(value) => console.log(value)}
                         />
@@ -68,20 +66,7 @@ export default function PendingList() {
                             <article
                                 key={item?.test_req_id ?? item?.vid ?? index}
                                 className="flex items-center justify-between rounded-2xl border border-[#A9A9A9] bg-white px-3 py-3 shadow-sm transition-colors hover:bg-slate-50 sm:px-4 cursor-pointer"
-                                onClick={() => {
-                                    if (!userId) {
-                                        alert("Please log in again before opening a patient.");
-                                        return;
-                                    }
-
-                                    handleLockAndOpen({
-                                        testReqId: item?.test_req_id,
-                                        mpi: item?.mpi,
-                                        vid: item?.vid,
-                                        fname: item?.fname,
-                                        lname: item?.lname,
-                                    });
-                                }}
+                                onClick={() => handleOpen(item)}
                             >
                                 <div className="flex items-center gap-3 sm:gap-4">
                                     <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#E5E7EB] text-[#7A7979]">
@@ -96,7 +81,7 @@ export default function PendingList() {
                                         <p className="text-sm font-bold text-[#152F5B] sm:text-base">
                                             {item?.fname} {item?.lname}
                                         </p>
-                                        <p className="text-xs font-semibold text-[#7A7979] sm:text-sm">MPI: {item?.mpi}</p>
+                                        <p className="text-xs font-semibold text-[#7A7979] sm:text-sm">NIC: {item?.nic}</p>
                                         <p className="text-xs text-[#7A7979] sm:text-sm">Date: {item?.date}</p>
                                         <p className="text-xs font-semibold text-[#7A7979] sm:text-sm">VID: {item?.vid}</p>
                                     </div>

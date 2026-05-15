@@ -1,19 +1,32 @@
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+
+import { login } from "../api/auth";
+import error_response from "../api/error_response";
 
 export default function Login() {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPass, setShowPass] = useState(false);
-
     const navigate = useNavigate();
+    
+    const { mutate } = useMutation({
+        mutationFn: login,
+        onSuccess: (data) => {
+            navigate("/dashboard");
+        },
+        onError: (error) => {
+            alert(error_response(error, "Login failed:"));
+            console.error("Login failed:", error);
+        }
+    });
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // TODO: wire up login API
-        console.log({ email, password });
+        mutate({ email, password });
     };
 
     return (

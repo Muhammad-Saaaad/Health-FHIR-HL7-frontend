@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
@@ -6,35 +6,16 @@ import { ArrowLeft } from "lucide-react";
 import Sidebar from "../components/sidebar";
 import Heading from "../components/heading";
 import { complete_result, get_test_result } from "../api/result";
-import { unlock_test_request } from "../api/patient";
 import error_response from "../api/error_response";
-
-const DEFAULT_TEMPLATES = {
-    CBC: [
-        { test_name: "Hemoglobin (Hb)", normal_range: "13.5 - 17.5", units: "g/dL" },
-        { test_name: "RBC Count", normal_range: "4.7 - 6.1", units: "million/µL" },
-        { test_name: "Hematocrit (Hct)", normal_range: "40 - 54", units: "%" },
-        { test_name: "WBC Count", normal_range: "4,000 - 11,000", units: "/µL" },
-        { test_name: "Platelets", normal_range: "150,000 - 450,000", units: "/µL" },
-        { test_name: "MCV (Mean Corpuscular Volume)", normal_range: "80 - 100", units: "fL" },
-        { test_name: "MCH (Mean Corpuscular Hb)", normal_range: "27 - 33", units: "pg" },
-    ],
-};
-
-function buildTemplate(testName) {
-    return DEFAULT_TEMPLATES[testName] ?? [
-        { test_name: testName || "Lab Test", normal_range: "-", units: "" },
-    ];
-}
 
 export default function LabResult() {
     const navigate = useNavigate();
     const { testReqId } = useParams();
     const { state } = useLocation();
     const userId = localStorage.getItem("user_id");
-    const unlockedRef = useRef(false);
-    const skipFirstCleanupRef = useRef(true);
+    const labId = localStorage.getItem("lab_id");
 
+    // Load the saved/in-progress result for the selected test request.
     const { data, isLoading, isError } = useQuery({
         queryKey: ["lis_lab_result", testReqId],
         queryFn: () => get_test_result(testReqId),
@@ -42,8 +23,10 @@ export default function LabResult() {
     });
 
     const backendResult = data?.data;
-    const testName = state?.test_name || backendResult?.test_name || "CBC";
-    const templateRows = useMemo(() => {
+    const testName = state?.test_name || backendResult?.test_name || "Lab Test";
+    
+    const templateRows = useMemo(() => { // useMemo to avoid rebuilding rows on every render, which would reset user edits.
+        // Prefer backend mini-tests so users can continue editing existing values.
         const backendMiniTests = backendResult?.mini_test_results ?? backendResult?.mini_tests;
 
         if (backendMiniTests?.length) {
@@ -56,13 +39,8 @@ export default function LabResult() {
             }));
         }
 
-        return buildTemplate(testName).map((item) => ({
-            test_name: item.test_name,
-            normal_range: item.normal_range,
-            units: item.units,
-            result_value: "",
-        }));
-    }, [backendResult, testName]);
+        return [];
+    }, [backendResult]);
 
     const [description, setDescription] = useState("");
     const [miniTests, setMiniTests] = useState(templateRows);
@@ -75,34 +53,15 @@ export default function LabResult() {
         setMiniTests(templateRows);
     }, [templateRows]);
 
-    const handleUnlock = useCallback(async () => {
-        if (!userId || !testReqId || unlockedRef.current) {
-            return;
-        }
-
-        unlockedRef.current = true;
-        await unlock_test_request(testReqId, userId);
-    }, [testReqId, userId]);
-
-    useEffect(() => {
-        return () => {
-            if (skipFirstCleanupRef.current) {
-                skipFirstCleanupRef.current = false;
-                return;
-            }
-
-            handleUnlock().catch((err) => {
-                console.error("Failed to unlock result request:", err);
-            });
-        };
-    }, [handleUnlock]);
 
     const { mutate: handleSave, isPending: isSaving } = useMutation({
         mutationFn: () =>
+            // Send only the fields the result completion API expects.
             complete_result({
                 user_id: parseInt(userId),
+                lab_id: labId,
                 test_req_id: parseInt(testReqId),
-                description,
+                description: description,
                 mini_tests: miniTests.map((item) => ({
                     test_name: item.test_name,
                     normal_range: item.normal_range,
@@ -110,11 +69,8 @@ export default function LabResult() {
                     result_value: item.result_value,
                 })),
             }),
-        onSuccess: async () => {
+        onSuccess: () => {
             alert("Result saved successfully!");
-            await handleUnlock().catch((err) => {
-                console.error("Failed to unlock result request:", err);
-            });
             navigate(-1);
         },
         onError: (error) => {
@@ -123,6 +79,7 @@ export default function LabResult() {
     });
 
     const handleMiniTestChange = (index, value) => {
+        // Keep row edits immutable so React reliably re-renders the table.
         setMiniTests((prev) =>
             prev.map((item, currentIndex) =>
                 currentIndex === index ? { ...item, result_value: value } : item
@@ -144,12 +101,7 @@ export default function LabResult() {
                 <div className="mb-5 flex items-center gap-3">
                     <button
                         type="button"
-                        onClick={async () => {
-                            await handleUnlock().catch((err) => {
-                                console.error("Failed to unlock result request:", err);
-                            });
-                            navigate(-1);
-                        }}
+                        onClick={() => navigate(-1)}
                         className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#D6DCE8] bg-white text-[#31486F] shadow-sm transition-colors hover:bg-slate-50"
                         aria-label="Go back"
                     >

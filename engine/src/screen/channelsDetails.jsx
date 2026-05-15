@@ -28,13 +28,16 @@ export default function ChannelDetails() {
         }
     });
 
-    const { data: mappingData, isLoading: mappingLoading, isError: mappingError } = useQuery(
+    const { data: mappingData, isLoading: mappingLoading, isError: mappingError, isSuccess } = useQuery(
         {
-        queryKey: ["get_mappings", route?.route_id],
-        queryFn: () => get_mappings(route?.route_id),
-        enabled: !!route?.route_id,
+            queryKey: ["get_mappings", route?.route_id],
+            queryFn: () => get_mappings(route?.route_id),
+            enabled: !!route?.route_id,
+        }
+    );
+    if (isSuccess) {
+        route.mapping = mappingData?.data; // add mapping data to route object, so that we can pass it to edit channel page without making another API call there.
     }
-);
 
     // Format each rule as:  "src_name → dest1_name + dest2_name"
     const mappingLines = mappingData?.data?.map(rule => {
@@ -106,7 +109,11 @@ export default function ChannelDetails() {
                 <br /><br />
 
                 <div className="flex justify-center space-x-10 md:space-x-20 lg:space-x-40">
-                    <Button className="w-40" text="Edit" />
+                    {/* <Button 
+                        className="w-40" 
+                        text="Edit"
+                        onClickfunction={() => navigator("/edit-channel", { state: route })}
+                    /> */}
                     <Button className="w-40 bg-gray-200 text-[#202020]" text="Delete" onClickfunction={() => {
                         if (window.confirm("Are you sure you want to delete this channel? This action cannot be undone.")) {
                             mutate(route.route_id);

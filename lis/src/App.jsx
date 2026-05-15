@@ -20,13 +20,13 @@ function App() {
           <Route path='/home' element={<PendingList />} />
           <Route path='/pending-list' element={<PendingList />} />
           <Route path='/lab-test' element={<AcceptedTests />} />
-          <Route path='/pending-test/:mpi/:vid' element={<PendingTestDetail />} />
+          <Route path='/pending-test/:nic/:vid' element={<PendingTestDetail />} />
           <Route path='/records' element={<Home />} />
           <Route path='/record' element={<Navigate to="/records" replace />} />
           <Route path='/lab-result/:testReqId' element={<LabResult />} />
           <Route path='/view-report/:reportId' element={<ViewReport />} />
           <Route path='/view-report' element={<ViewReport />} />
-          <Route path='/patient/:mpi' element={<PatientDetail />} />
+          <Route path='/patient/:nic' element={<PatientDetail />} />
           <Route path='/signup' element={<SignUp />} />
           <Route path='/login' element={<Login />} />
         </Routes>

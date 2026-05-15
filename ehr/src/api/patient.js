@@ -4,8 +4,8 @@ export const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
 });
 
-export const get_patients = async () => {
-    const response = await api.get(`/patients`);
+export const get_patients = async (hospital_id) => {
+    const response = await api.get(`/all-patients/${hospital_id}`);
     return response;
 }
 

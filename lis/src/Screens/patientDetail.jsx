@@ -8,13 +8,14 @@ import { get_patient_detail } from "../api/patient";
 
 export default function PatientDetail() {
     const navigate = useNavigate();
-    const { mpi } = useParams();
+    const { nic } = useParams();
     const { state } = useLocation();
+    const lab_id = localStorage.getItem("lab_id");
 
     const { data, isLoading, isError } = useQuery({
-        queryKey: ["lis_patient_detail", mpi],
-        queryFn: () => get_patient_detail(mpi),
-        enabled: Boolean(mpi),
+        queryKey: ["lis_patient_detail", nic, lab_id],
+        queryFn: () => get_patient_detail(nic, lab_id),
+        enabled: Boolean(nic),
     });
 
     const patient = data?.data;
@@ -42,8 +43,8 @@ export default function PatientDetail() {
                 <section className="max-w-4xl rounded-3xl border border-[#D6DCE8] bg-white p-5 shadow-sm sm:p-6">
                     <div className="grid gap-3 sm:grid-cols-3">
                         <div>
-                            <p className="text-sm font-semibold text-[#31486F]">MPI:</p>
-                            <p className="text-base text-[#7A7979]">{isLoading ? "Loading..." : patient?.mpi ?? state?.mpi ?? "-"}</p>
+                            <p className="text-sm font-semibold text-[#31486F]">NIC:</p>
+                            <p className="text-base text-[#7A7979]">{isLoading ? "Loading..." : patient?.nic ?? state?.nic ?? "-"}</p>
                         </div>
                         <div>
                             <p className="text-sm font-semibold text-[#31486F]">Age:</p>
@@ -76,7 +77,7 @@ export default function PatientDetail() {
                                             navigate(`/view-report/${report?.report_id}`, {
                                                 state: {
                                                     report_id: report?.report_id,
-                                                    mpi: patient?.mpi ?? state?.mpi,
+                                                    nic: patient?.nic ?? state?.nic,
                                                     fname: patient?.fname ?? state?.fname,
                                                     lname: patient?.lname ?? state?.lname,
                                                     test_name: report?.test_name,

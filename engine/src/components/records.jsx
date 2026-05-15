@@ -15,7 +15,7 @@ export default function Records({data}){
                     </div>
                     <div>
                       <p className="font-bold text-[#152F5B]">{item.name}</p>
-                      <p className="font-bold opacity-60">MPI: {item.mpi}</p>
+                      <p className="font-bold opacity-60">NIC: {item.nic}</p>
                       <p className="opacity-40">Updated at: {item.updated_at}</p>
                       <p className="opacity-60 font-bold">policy_number: {item.policy_number}</p>
                     </div>

@@ -20,6 +20,7 @@ export default function Login() {
             const user = response?.data;
             if (user?.user_id !== undefined && user?.user_id !== null) {
                 localStorage.setItem("user_id", String(user.user_id));
+                localStorage.setItem("lab_id", String(user.lab_id));
             }
             alert("Login Sucessfull");
             navigate("/home");

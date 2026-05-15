@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { useNavigate } from "react-router-dom"
 
 import error_response from "../api/error_response"
@@ -22,7 +22,8 @@ function AddPatient() {
         address: "",
         insurance_company: "",
         policy_number: "",
-        plan_type: ""
+        plan_type: "",
+        hospital_id: localStorage.getItem("hospital_id")
     });
 
     const handleChange = (field, value) => {

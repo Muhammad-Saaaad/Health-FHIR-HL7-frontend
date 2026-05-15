@@ -26,6 +26,31 @@ const DropDown = (props) => {
     </select>
 }
 
+export const HospitalDropDown = (props) => {
+    // This onSelect is a function that is given from the parent to this compoenent
+    let {options, defaultValue, onSelect} = props;
+
+    function changeValue(event){
+        const value = event.target.value;
+        if (onSelect){
+            onSelect(value);
+        }
+    }
+    
+    return <select 
+        className="w-full h-12 p-2 pr-8"
+        onChange={changeValue}
+        defaultValue={defaultValue}
+    >
+        <option value="">{defaultValue}</option>
+
+        {options?.map((element, index) => (
+            <option key={index} value={element.hospital_id}>{element.name}</option>
+        ))}
+
+    </select>
+}
+
 export function SearchDropDown({ options, defaultValue, onSelect, DefaultValueClassName, OptionsClassNames }) { // custom dropdown
 
     const [open, setOpen] = useState(false);

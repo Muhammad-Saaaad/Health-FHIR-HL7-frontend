@@ -28,6 +28,26 @@ export function SearchDropDown({ options, defaultValue, onSelect }) { // custom 
                 <div className="left-0 border border-gray-300 rounded-2xl shadow-lg overflow-hidden">
                     {
                         options.map((item, index) => {
+                            let display_item = item;
+                            if (item === "ADT^A04") {
+                                display_item = "ADT^A04 (Patient Registration)";
+                            }
+                            else if (item === "ADT^A01") {
+                                display_item = "ADT^A01 (Add Encounter)";
+                            }
+                            else if (item === "DFT^P03") {
+                                display_item = "DFT^P03 (Send Claim Submission)";
+                            }
+                            else if (item === "ORM^O01") {
+                                display_item = "ORM^O01 (Send Lab Test Order)";
+                            }
+                            else if (item === "ORU^R01") {
+                                display_item = "ORU^R01 (Send Report/Results)";
+                            }
+                            else if (item === "BAR^P10") {
+                                display_item = "BAR^P10 (Claim Approval/Rejection)";
+                            }
+
                             let style = "text-center py-2 w-full h-10 active:bg-gray-600";
                             if (index % 2 == 0) {
                                 style += " bg-[#7A7979] text-[#152F5B] font-bold hover:bg-gray-600 "
@@ -40,7 +60,9 @@ export function SearchDropDown({ options, defaultValue, onSelect }) { // custom 
                                 onClick={() => dropDownValue(item)}  // execute function, call the function with the item
                                 className={style}
                             >
-                                {item}
+                                {
+                                    display_item
+                                }
                             </div>
                         })
                     }

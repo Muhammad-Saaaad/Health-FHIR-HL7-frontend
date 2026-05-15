@@ -1,56 +1,32 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
 
 import Sidebar from "../components/sidebar";
 import Heading from "../components/heading";
-import { get_patient_process, unlock_test_request, update_report_status } from "../api/patient";
+import { get_patient_process, update_report_status } from "../api/patient";
 import error_response from "../api/error_response";
 
 export default function PendingTestDetail() {
     const navigate = useNavigate();
-    const { mpi, vid } = useParams();
+    const { nic, vid } = useParams();
     const { state } = useLocation();
     
     const [testStatuses, setTestStatuses] = useState({});
     const [testBills, setTestBills] = useState({});
-    const testReqId = state?.test_req_id;
     const userId = localStorage.getItem("user_id");
-    const unlockedRef = useRef(false);
-    const skipFirstCleanupRef = useRef(true);
 
     // Fetch patient process data with pending tests
     const { data, isLoading, isError } = useQuery({
-        queryKey: ["lis_pending_test_detail", mpi, vid],
-        queryFn: () => get_patient_process(mpi, vid),
-        enabled: Boolean(mpi && vid),
+        queryKey: ["lis_pending_test_detail", nic, vid],
+        queryFn: () => get_patient_process(nic, vid),
+        enabled: Boolean(nic && vid),
     });
 
     const patient = data?.data;
 
-    const handleUnlock = useCallback(async () => {
-        if (!userId || !testReqId || unlockedRef.current) {
-            return;
-        }
-
-        unlockedRef.current = true;
-        await unlock_test_request(testReqId, userId);
-    }, [testReqId, userId]);
-
-    // Cleanup: unlock tests on unmount after the request is submitted or the user backs out.
-    useEffect(() => {
-        return () => {
-            if (skipFirstCleanupRef.current) {
-                skipFirstCleanupRef.current = false;
-                return;
-            }
-
-            handleUnlock().catch((err) => {
-                console.error("Failed to unlock tests:", err);
-            });
-        };
-    }, [handleUnlock, userId, testReqId]);
+    // Lock/unlock flow disabled for this screen.
 
     // Initialize test statuses from patient data
     useEffect(() => {
@@ -75,11 +51,8 @@ export default function PendingTestDetail() {
                 user_id: parseInt(userId),
                 visit_id: vid,
             }),
-        onSuccess: async () => {
+        onSuccess: () => {
             alert("Tests updated successfully!");
-            await handleUnlock().catch((err) => {
-                console.error("Failed to unlock tests:", err);
-            });
             navigate(-1);
         },
         onError: (error) => {
@@ -113,12 +86,7 @@ export default function PendingTestDetail() {
                 <div className="mb-6 flex items-center gap-3">
                     <button
                         type="button"
-                        onClick={async () => {
-                            await handleUnlock().catch((err) => {
-                                console.error("Failed to unlock tests:", err);
-                            });
-                            navigate(-1);
-                        }}
+                        onClick={() => navigate(-1)}
                         className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#D6DCE8] bg-white text-[#31486F] shadow-sm transition-colors hover:bg-slate-50"
                         aria-label="Go back"
                     >
@@ -140,8 +108,8 @@ export default function PendingTestDetail() {
                         <section className="max-w-4xl rounded-3xl border border-[#D6DCE8] bg-white p-5 shadow-sm sm:p-6 mb-6">
                             <div className="grid gap-3 sm:grid-cols-4">
                                 <div>
-                                    <p className="text-sm font-semibold text-[#31486F]">MPI:</p>
-                                    <p className="text-base text-[#7A7979]">{patient?.mpi ?? state?.mpi ?? "-"}</p>
+                                    <p className="text-sm font-semibold text-[#31486F]">NIC:</p>
+                                    <p className="text-base text-[#7A7979]">{patient?.nic ?? state?.nic ?? "-"}</p>
                                 </div>
                                 <div>
                                     <p className="text-sm font-semibold text-[#31486F]">VID:</p>

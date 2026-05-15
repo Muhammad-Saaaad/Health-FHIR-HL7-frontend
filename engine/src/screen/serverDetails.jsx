@@ -14,10 +14,12 @@ function ServerDetails(){
     if (userData === null){
         userData = {
             "server_name": "",
-            "Protocol": "",
+            "system_id": "",
+            "protocol": "",
             "status": "",
-            "IP": "",
-            "Port": ""
+            "ip": "",
+            "port": "",
+            "category": ""
         }
     }
 
@@ -44,6 +46,11 @@ function ServerDetails(){
                     <Textbox value={userData.server_name} readOnly={true} />
                     <br />
                     
+                    <Label text="System Id" />
+                    <br />
+                    <Textbox value={userData.system_id} readOnly={true} />
+                    <br />
+
                     <Label text="Protocol" />
                     <br />
                     <Textbox value={userData.protocol} readOnly={true} />
@@ -62,12 +69,17 @@ function ServerDetails(){
                     <Label text="Port" />
                     <br />
                     <Textbox value={userData.port} readOnly={false} />
-                    <br /><br />
+                    <br />
 
-                    <div className="flex justify-center space-x-10 md:space-x-20 lg:space-x-40">
+                    <Label text="Category" />
+                    <br />
+                    <Textbox value={userData.category} readOnly={false} />
+                    <br /><br />
+                    
+                    {/* <div className="flex justify-center space-x-10 md:space-x-20 lg:space-x-40">
                         <Button className="w-40" text="Edit"></Button>
                         <Button className="w-40 bg-gray-200 text-[#202020]" text="Delete"></Button>
-                    </div>
+                    </div> */}
                 </form>
             </main>
         </div>

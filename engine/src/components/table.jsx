@@ -43,7 +43,9 @@ export default function Table({ data }) {
                                                     "protocol": item.protocol,
                                                     "status": item.status,
                                                     "ip": item.ip,
-                                                    "port": item.port
+                                                    "port": item.port,
+                                                    "category": item.category,
+                                                    "system_id": item.system_id
                                                 }
                                             })
                                     }
@@ -73,7 +75,7 @@ export function ChannelsTable({ data }) {
 
                     // you should add the key to the parent container instead of child containers.
                     return <div key={index} className="m-2 border-2 border-gray-400 rounded-lg px-2 py-1 shadow-lg">
-                        <div className="font-extrabold text-[#152F5B] text-xl text-start">
+                        <div className="font-bold text-[#152F5B] text-xl text-start">
                             {item.channel_name}
                         </div>
                         <hr />

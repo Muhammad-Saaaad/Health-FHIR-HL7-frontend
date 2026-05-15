@@ -11,7 +11,7 @@ import SideBar from "../components/sidebar"
 
 export default function Dashboard() {
 
-    const { data, isLoading, isError, error, status } = useQuery({
+    const { data, isLoading, isError, error } = useQuery({
         queryKey: ["dashboard_get_servers"],
         queryFn: get_servers,
     });

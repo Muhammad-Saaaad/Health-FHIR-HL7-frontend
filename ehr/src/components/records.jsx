@@ -59,7 +59,8 @@ export function Notes({mpi}){
   const { data: visitNotes = [], isLoading, isError } = useQuery({
     queryKey: ['visit_notes', mpi, doctor_id],
     queryFn: () => visit_note_by_doctor_per_patient(mpi, doctor_id),  
-    enabled: Boolean(mpi && (doctor_id != undefined || doctor_id != null)) // only trigger when there is an mpi and doctor_id available
+    enabled: Boolean(mpi && (doctor_id != undefined || doctor_id != null)), // only trigger when there is an mpi and doctor_id available
+    retry: false, // do not retry on failure, we will handle it in UI
   });
 
   if (isLoading) {

@@ -1,10 +1,10 @@
 import { useState } from "react"
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 
 import { get_servers } from "../api/server";
 import { get_endpoints, get_endpointFields } from '../api/endpoint';
-import { add_channel } from "../api/channels";
+import { edit_channel } from "../api/channels";
 import error_response from "../api/error_response";
 
 import Heading from "../components/heading"
@@ -13,21 +13,24 @@ import Textbox from "../components/textbox"
 import DropDown, { SearchDropDown } from "../components/dropdown"
 import Button from "../components/button"
 import SideBar from "../components/sidebar"
-import Mapping from '../components/mapping';
+import EditMapping from '../components/editMapping';
 
-export default function AddChannels() {
+export default function EditChannel() {
 
     const navigate = useNavigate();
+    const location = useLocation();
+    const route = location.state; // full route object from API, if we are comming from edit channel page, this will have the data of the channel to be edited.
     
     const [data, setData] = useState({
-        "name": "",
-        "src_server_id": '',
-        "src_endpoint_id": '',
-        "dest_server_id": '',
-        "dest_endpoint_id": '',
-        "msg_type": "",
+        "name": route?.channel_name || "",
+        "src_server_id": route?.src_server?.server_id || '',
+        "src_endpoint_id": route?.src_endpoint?.endpoint_id  || '',
+        "dest_server_id": route?.dest_server?.server_id || '',
+        "dest_endpoint_id": route?.dest_endpoint?.endpoint_id || '',
+        "msg_type": route?.msg_type || '',
     });
-    const [mappingRules, setMappingRules] = useState([]); // mapping: [{}, {}, ...]
+    
+    const [mappingRules, setMappingRules] = useState(route?.mapping || []); // mapping: [{}, {}, ...]
 
     function arraysEqual(a, b) { // check if 2 array's are equal or not.
         if (a === b) return true; // Check if they are the exact same reference
@@ -41,9 +44,9 @@ export default function AddChannels() {
     }
 
     const {mutate, isPending} = useMutation({
-        mutationFn: (data) => add_channel(data),
-        onSuccess: () => {alert("Channel added successfully!"); navigate("/all-channels")},
-        onError: (err) => {error_response(err, "Faild to Add Channel")}
+        mutationFn: (data) => edit_channel(route?.route_id, data),
+        onSuccess: () => {alert("Channel edited successfully!"); navigate("/all-channels")},
+        onError: (err) => {error_response(err, "Failed to Edit Channel")}
     })
 
     const { data: severData, isSuccess: serverIsStatus, isError: serverIsError, error: serverError } = useQuery({
@@ -86,7 +89,7 @@ export default function AddChannels() {
         setData(prev => ({ ...prev, "dest_server_id": server_id }));
     }    
 
-    function handleAddChannel() {
+    function handleEditChannel() {
         // debugger;
         const finalData = {
             ...data,
@@ -95,7 +98,7 @@ export default function AddChannels() {
         console.log("Final data to submit: ", finalData);
 
         if (!data.name || !data.src_server_id || !data.src_endpoint_id || !data.dest_server_id || !data.dest_endpoint_id || !data.msg_type) {
-            return alert("Please fill in all the fields to add a channel.");
+            return alert("Please fill in all the fields to edit the channel.");
         }
         mutate(finalData);
     }
@@ -104,13 +107,14 @@ export default function AddChannels() {
         <div className="flex overflow-hidden h-screen">
             <SideBar />
             <main className="flex-1 overflow-y-auto p-4">
-                <Heading text="Add Channels" />
+                <Heading text="Edit Channels" />
                 <br /><br />
 
                 <Label text="Channel Name" />
                 <br />
                 <Textbox 
                     placeholder="Enter Channel Name" 
+                    value={data.name}
                     onChange={(e) => setData({ ...data, "name": e.target.value })} 
                 />
                 <br />
@@ -118,9 +122,9 @@ export default function AddChannels() {
                 <Label text="Source Server" />
                 <br /> {/* Integrate API */}
                 <DropDown 
-                    keys={serverIsStatus ? severData.data?.filter(s=> s.server_id !== data.dest_server_id).map(s => s.server_id): ['']} 
-                    values={serverIsStatus ? severData.data?.filter(s=> s.server_id !== data.dest_server_id).map(s=> s.name): ['']} 
-                    defaultValue="Select Source Server" 
+                    keys={serverIsStatus ? severData.data?.filter(s=> s.server_id !== data.dest_server_id).map(s => s.server_id): ['']}
+                    values={serverIsStatus ? severData.data?.filter(s=> s.server_id !== data.dest_server_id).map(s=> s.name): ['']}
+                    defaultValue={data.src_server_id && severData?.data ? severData.data.find(s => s.server_id === data.src_server_id)?.name : "Select Source Server"}
                     onSelect={(key) => onSelectSrcServer(key)} 
                 />
                 {
@@ -131,9 +135,9 @@ export default function AddChannels() {
                 <Label text="Source EndPoint" />
                 <br /> {/* Integrate API */}
                 <DropDown 
-                    keys={srcEndpointISSuccess ? srcEndpointData.data?.map(ep=> ep.endpoint_id) : ['']} 
-                    values={srcEndpointISSuccess ? srcEndpointData.data?.map(ep=> ep.url) : ['']} 
-                    defaultValue="Select Source Endpoint" 
+                    keys={srcEndpointISSuccess ? srcEndpointData.data?.map(ep=> ep.endpoint_id) : ['']}
+                    values={srcEndpointISSuccess ? srcEndpointData.data?.map(ep=> ep.url) : ['']}
+                    defaultValue={data.src_endpoint_id && srcEndpointData?.data ? srcEndpointData.data.find(ep => ep.endpoint_id === data.src_endpoint_id)?.url : "Select Source Endpoint"}
                     onSelect={(src_endpoint_id) => setData({ ...data, "src_endpoint_id": src_endpoint_id })} 
                 />
                 <br /><br />
@@ -141,9 +145,9 @@ export default function AddChannels() {
                 <Label text="Destination Server" />
                 <br /> {/* Integrate API */}
                 <DropDown 
-                    keys={serverIsStatus ? severData.data?.filter(s=> s.server_id !== data.src_server_id).map(s=> s.server_id): ['']} 
-                    values={serverIsStatus ? severData.data?.filter(s=> s.server_id !== data.src_server_id).map(s=> s.name): ['']} 
-                    defaultValue="Select Destination Server" 
+                    keys={serverIsStatus ? severData.data?.filter(s=> s.server_id !== data.src_server_id).map(s=> s.server_id): ['']}
+                    values={serverIsStatus ? severData.data?.filter(s=> s.server_id !== data.src_server_id).map(s=> s.name): ['']}
+                    defaultValue={data.dest_server_id && severData?.data ? severData.data.find(s => s.server_id === data.dest_server_id)?.name : "Select Destination Server"}
                     onSelect={(dest_server_id) => onSelectDestServer(dest_server_id)} 
                 />
                 {
@@ -154,37 +158,36 @@ export default function AddChannels() {
                 <Label text="Destination EndPoint" />
                 <br /> {/* Integrate API */}
                 <DropDown 
-                    keys={destEndpointISSuccess ? destEndpointData.data?.map(ep=> ep.endpoint_id) : ['']} 
-                    values={destEndpointISSuccess ? destEndpointData.data?.map(ep=> ep.url) : ['']} 
-                    defaultValue="Select Destination Endpoint" 
+                    keys={destEndpointISSuccess ? destEndpointData.data?.map(ep=> ep.endpoint_id) : ['']}
+                    values={destEndpointISSuccess ? destEndpointData.data?.map(ep=> ep.url) : ['']}
+                    defaultValue={data.dest_endpoint_id && destEndpointData?.data ? destEndpointData.data.find(ep => ep.endpoint_id === data.dest_endpoint_id)?.url : "Select Destination Endpoint"}
                     onSelect={(dest_endpoint_id) => setData({ ...data, "dest_endpoint_id": dest_endpoint_id })} 
                 />
                 <br /><br />
 
-                <Mapping 
+                <EditMapping 
                     src_server_id={data.src_server_id}
                     dest_server_id={data.dest_server_id}
-                    srcFieldIsSuccess={srcFieldIsSuccess} // we give this so that the fields can be display on the table.
-                    srcFieldData={srcFieldData} // the field data to be displayed on the mapping table.
+                    srcFieldIsSuccess={srcFieldIsSuccess}
+                    srcFieldData={srcFieldData}
                     destFieldISSuccess={destFieldISSuccess} 
                     destFieldData={destFieldData} 
+                    mappingRules={mappingRules}
                     
-                    // Triggered when "add mapping" button is clicked
                     takeData={(mappingData) => setMappingRules(prev => ([ ...prev, mappingData ]))}
 
-                    // Triggered when you want to remove a mapping line.
                     removeData={(line) => 
                         setMappingRules(prev => {
-                            return prev.filter(m => // Remove all the mappings that have the same src_paths and dest_paths as the line to be removed.
+                            return prev.filter(m =>
                                 !(arraysEqual(m.src_paths, line.src_paths) && arraysEqual(m.dest_paths, line.dest_paths))
                             );
-                        }
-                    )}
+                        })
+                    }
                 />
 
                 <SearchDropDown
-                    options={["ADT^A04", "ADT^A01", "DFT^P03", "ORM^O01", "ORU^R01", "BAR^P10"]}
-                    defaultValue="Message Type"
+                    options={["ADT", "ORM", "ORU", "DFT"]}
+                    defaultValue={data.msg_type || "Message Type"}
                     onSelect={(msg_type) => setData({ ...data, "msg_type": msg_type })}
                 />
                 <br /><br />
@@ -192,8 +195,8 @@ export default function AddChannels() {
                 <div className="flex justify-center items-center">
                     <Button 
                         className={`w-50 font-semibold ${isPending ? "cursor-not-allowed opacity-50 w-70" : ""}`}
-                        text={isPending ? "Adding Channel..." : "Add Channel"}
-                        onClickfunction={() => handleAddChannel()}
+                        text={isPending ? "Saving Channel..." : "Save Channel"}
+                        onClickfunction={() => handleEditChannel()}
                     />
                 </div>
 

@@ -29,7 +29,7 @@ const Home = () => {
             <Textbox placeholder="Search Patients"></Textbox>
           </div>
           <div className="col-start-3 flex justify-end items-center">
-            <CustomDropDown options={["Name", "MPI"]} defaultValue="Search by" onSelect={(value) => console.log(value)} />
+            <CustomDropDown options={["Name", "NIC"]} defaultValue="Search by" onSelect={(value) => console.log(value)} />
           </div>
         </div>
 

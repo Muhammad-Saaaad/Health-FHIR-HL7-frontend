@@ -2,6 +2,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 
+import { signup } from "../api/auth";
+import error_response from "../api/error_response";
+import { useMutation } from "@tanstack/react-query";
+
 export default function SignUp() {
 
     const [email, setEmail] = useState("");
@@ -10,10 +14,20 @@ export default function SignUp() {
 
     const navigate = useNavigate();
 
+    const { mutate } = useMutation({
+        mutationFn: signup,
+        onSuccess: (data) => {
+            navigate("/login");
+        },
+        onError: (error) => {
+            alert(error_response(error, "Signup failed:"));
+            console.error("Signup failed:", error);
+        }
+    });
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        // TODO: wire up signup API
-        console.log({ name, email, password });
+        mutate({ name, email, password });
     };
 
     return (

@@ -19,11 +19,13 @@ export default function AddVisitNote() {
     const location = useLocation();
     const mpi = location.state?.mpi;
     const doctor_id = localStorage.getItem("doctor_id");
+    const hospital_id = localStorage.getItem("hospital_id");
 
     // const [selectedTest, setSelectedTest] = useState([]);
     const [note, setNote] = useState({
         mpi: mpi,
         doctor_id: doctor_id,
+        hospital_id: hospital_id,
 
         note_title: "",
         patient_complaint: "",
@@ -50,6 +52,7 @@ export default function AddVisitNote() {
 
     const handleSaveNote = (e) => {
         e.preventDefault();
+        console.log("Saving note with data:", note);
         mutate({
             ...note,
             bill_amount: Number(note.bill_amount)

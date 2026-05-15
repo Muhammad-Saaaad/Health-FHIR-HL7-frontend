@@ -1,16 +1,18 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
-import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { User, Mail, Lock, Eye, EyeOff, Building } from "lucide-react";
 
-import { signup } from "../api/doctor";
+import { signup, get_all_hospitals } from "../api/doctor";
 import error_response from "../api/error_response";
+import { HospitalDropDown } from "../components/dropdown";
 
 export default function SignUp() {
 
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [hospital, setHospital] = useState("");
     const [showPass, setShowPass] = useState(false);
 
     const navigate = useNavigate();
@@ -23,14 +25,22 @@ export default function SignUp() {
         onError: (error)=>{error_response(error, "Failed to SignUP")}
     });
 
+    const { data: hospitals } = useQuery({
+        queryKey: ['all-hospitals'],
+        queryFn: get_all_hospitals
+    })
+
     const handleSubmit = (e) => {
         e.preventDefault();
         
-        mutate({
+        let data = {
             name: name,
             email: email,
-            password: password
-        });
+            password: password,
+            hospital_id: hospital
+        };
+        console.log("signup data --> ", data);
+        mutate(data);
     };
 
     return (
@@ -52,6 +62,19 @@ export default function SignUp() {
                             onChange={(e) => setName(e.target.value)}
                             required
                         />
+                    </div>
+
+                    {/* Hospital */}
+                    <div className="flex items-center gap-3 border-2 border-[#E8F3F1] rounded-2xl px-4 ">
+                        <Building size={18} className="text-gray-400 shrink-0" />
+                        <div className="flex-1">
+                            <HospitalDropDown
+                                options={hospitals}
+                                defaultValue={"Select hospital"}
+                                onSelect={(selectedHospital) => setHospital(selectedHospital)}
+                                required
+                            />
+                        </div>
                     </div>
                     
                     {/* Email */}
@@ -90,7 +113,7 @@ export default function SignUp() {
                             type="submit"
                             className="w-full bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white font-semibold py-3 rounded-full transition-colors"
                         >
-                            {isPending ? "Loading" : "Sign In"}
+                            {isPending ? "Loading" : "Sign Up"}
                         </button>
                     </div>
 
@@ -101,7 +124,7 @@ export default function SignUp() {
                             onClick={() => navigate("/login")}
                             className="text-blue-500 font-semibold"
                         >
-                            Sign Up
+                            Sign In
                         </button>
                     </p>
 

@@ -17,3 +17,8 @@ export const get_doctor = async (doc_id) => {
     const response = await api.get(`/get-doctor/${doc_id}`);
     return response;
 };
+
+export const get_all_hospitals = async () => {
+    const response = await api.get(`/all-hospitals`);
+    return response.data;
+}

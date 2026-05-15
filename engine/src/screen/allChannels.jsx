@@ -30,7 +30,7 @@ export default function AllChannels() {
                     <LowerHeading text="Channels" className="text-4xl md:text-5xl" />
 
                     <div className="flex justify-center items-center">
-                        <Button className="h-13" text="Add Channel" onClickPath="/add-channels" type="button" />
+                        <Button className="h-16 sm:h-13" text="Add Channel" onClickPath="/add-channels" type="button" />
                     </div>
                 </div>
                 <br /><hr />

@@ -12,9 +12,9 @@ export default function Records({data}){
               key={index} 
               className="border-2 border-[#828181] rounded-2xl col-span-12 sm:col-span-6 lg:col-span-4 grid grid-cols-12 my-1 sm:my-3 cursor-pointer transition-colors hover:bg-slate-50 "
               onClick={() => {
-                navigate(`/patient/${item.mpi}`, {
+                navigate(`/patient/${item.nic}`, {
                   state: {
-                    mpi: item.mpi,
+                    nic: item.nic,
                     fname: item.fname,
                     lname: item.lname,
                     updated_at: item.updated_at,
@@ -29,7 +29,7 @@ export default function Records({data}){
                     </div>
                     <div>
                       <p className="font-bold text-[#152F5B]">{item.fname + " " + item.lname}</p>
-                      <p className="font-bold opacity-60">MPI: {item.mpi}</p>
+                      <p className="font-bold opacity-60">NIC: {item.nic}</p>
                       <p className="opacity-40">Updated at: {item.updated_at}</p>
                     </div>
                   </div>

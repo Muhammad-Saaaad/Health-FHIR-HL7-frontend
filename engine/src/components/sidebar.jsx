@@ -17,8 +17,8 @@ export default function Sidebar() {
     const menuItems = [
         { icon: Home, label: 'Dashboard', path: '/dashboard', other_paths: ['/add-server', '/server-details']},
         { icon: BatteryCharging, label: 'Add EndPoint', path: '/add-endpoint', other_paths: []},
-        { icon: Route, label: 'Channels', path: '/all-channels', other_paths: ['/add-channels', '/channel-details']},
-        { icon: ScrollText, label: 'Logs', path: '/logs', other_paths: []},
+        { icon: Route, label: 'Channels', path: '/all-channels', other_paths: ['/add-channels', '/channel-details', '/edit-channel']},
+        { icon: ScrollText, label: 'Logs', path: '/logs', other_paths: ['/logs', '/log-message']},
     ];
 
     const handleNavigate = (path) => {

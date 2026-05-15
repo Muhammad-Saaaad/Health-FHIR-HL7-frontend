@@ -8,10 +8,11 @@ import Sidebar from "../components/sidebar";
 import Records from "../components/records"
 
 const Home = () => {
-
+  let hospital_id = localStorage.getItem("hospital_id");
+  
   const { data, isLoading, isError, error, status } = useQuery({
     queryKey: ['ehr_all_patients'],
-    queryFn: get_patients
+    queryFn: () => get_patients(hospital_id)
   });
   
   return (

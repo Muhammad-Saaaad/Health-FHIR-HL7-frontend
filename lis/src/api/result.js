@@ -5,16 +5,8 @@ const api = axios.create({
 });
 
 export async function get_test_result(testReqId) {
-    try {
-        const response = await api.get(`/results/test_req_id/${testReqId}`);
-        return response;
-    } catch (error) {
-        if (error?.response?.status === 404) {
-            return null;
-        }
-
-        throw error;
-    }
+    const response = await api.get(`/results/test_req_id/${testReqId}`);
+    return response;
 }
 
 export async function complete_result(payload) {

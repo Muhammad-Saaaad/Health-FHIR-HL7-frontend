@@ -26,6 +26,11 @@ export const add_channel = async (data) => {
     return response;
 };
 
+export const edit_channel = async (channel_id, data) => {
+    const response = await api.put(`/edit-route/${channel_id}`, data);
+    return response;
+}
+
 export const delete_channel = async (channel_id) => {
     const response = await api.delete(`/route/delete-route/${channel_id}`);
     return response;

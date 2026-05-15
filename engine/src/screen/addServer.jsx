@@ -29,6 +29,8 @@ export default function AddServer() {
     const [ip, setIp] = useState("");
     const [port, setPort] = useState("");
     const [protocol, setProtocol] = useState("");
+    const [category, setCategory] = useState("");
+    const [systemId, setSystemId] = useState("");
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -38,11 +40,23 @@ export default function AddServer() {
             return;
         }
 
+        if (!category){
+            alert("Select a category");
+            return;
+        }
+
+        if (!systemId){
+            alert("Enter a system ID");
+            return;
+        }
+
         mutation.mutate({
             name: name,
             ip: ip,
             port: parseInt(port),
-            protocol: protocol
+            protocol: protocol,
+            category: category,
+            system_id: systemId
         });
     }
 
@@ -59,6 +73,14 @@ export default function AddServer() {
                     <Textbox
                         placeholder="Enter Server Name"
                         onChange={(e) => setName(e.target.value)}
+                    />
+                    <br />
+
+                    <Label text="System Id" />
+                    <br />
+                    <Textbox
+                        placeholder="Enter System Id"
+                        onChange={(e) => setSystemId(e.target.value)}
                     />
                     <br />
 
@@ -84,6 +106,15 @@ export default function AddServer() {
                         options={["FHIR", "HL7"]}
                         defaultValue={protocol || "Select Protocol"}
                         onSelect={(value) => setProtocol(value)}
+                    />
+                    <br /><br />
+
+                    <Label text="Category" />
+                    <br />
+                    <SearchDropDown
+                        options={["EHR", "LIS", "Payer", "PHR"]}
+                        defaultValue={category || "Select Category"}
+                        onSelect={(value) => setCategory(value)}
                     />
                     <br /><br />
 
