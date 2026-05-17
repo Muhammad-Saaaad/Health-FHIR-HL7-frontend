@@ -13,10 +13,20 @@ export const login = async (payload) => {
     return response;
 };
 
+export const admin_login = async (payload) => {
+    const response = await api.post('login-admin', payload);
+    return response;
+}
+
 export const get_doctor = async (doc_id) => {
     const response = await api.get(`/get-doctor/${doc_id}`);
     return response;
 };
+
+export const add_hospital = async ({ name }) => {
+    const response = await api.post(`/add-hospital?name=${name}`);
+    return response;
+}
 
 export const get_all_hospitals = async () => {
     const response = await api.get(`/all-hospitals`);

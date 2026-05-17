@@ -21,7 +21,7 @@ export default function ViewCustomer() {
     
     const remaining_amount = data?.patient_policy?.total_coverage - data?.patient_policy?.amount_used;
     const policy_status = data?.patient_policy?.status;
-    const patient_mpi = (data?.mpi === "" || data?.mpi === undefined || data?.mpi === null) ? "Null" : data?.mpi;
+    const patient_nic = (data?.nic === "" || data?.nic === undefined || data?.nic === null) ? "Null" : data?.nic;
 
     return <div className="flex overflow-hidden">
             <Sidebar />
@@ -61,8 +61,8 @@ export default function ViewCustomer() {
                 <Label className="text-[#32496F]" text="Customer Info "/>
                 <div className="my-5 p-1 border-2 rounded-2xl border-[#7A7979] flex flex-col gap-2">
                     <div>
-                        <Label className="text-[#32496F]" text="MPI: "/>
-                        <Label className="text-[#7A7979] font-normal" text={!isLoading && !isError && patient_mpi} />
+                        <Label className="text-[#32496F]" text="NIC: "/>
+                        <Label className="text-[#7A7979] font-normal" text={!isLoading && !isError && patient_nic} />
                     </div>
                     <div>
                         <Label className="text-[#32496F]" text="Age: " />

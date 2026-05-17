@@ -22,6 +22,7 @@ export default function ViewDoctorDetails() {
     });
 
     const user_patient = JSON.parse(localStorage.getItem("user"));
+    console.log(user_patient);
 
     const rawDoctorName = `${doctor_detail?.name || ""}`.trim();
     const normalizedDoctorName = rawDoctorName.replace(/^dr\.?\s*/i, "").trim();
@@ -55,7 +56,7 @@ export default function ViewDoctorDetails() {
             </div>
 
             <div className="border-2 rounded-2xl border-[#7A7979] h-80 p-1">
-                <Notes mpi={user_patient.mpi} doctor_id={state?.doctor_id} />
+                <Notes nic={user_patient.nic} doctor_id={state?.doctor_id} />
             </div>
         </main>
     </div>

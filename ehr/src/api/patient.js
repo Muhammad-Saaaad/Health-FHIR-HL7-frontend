@@ -14,6 +14,11 @@ export const reg_patient = async (payload) => {
     return response;
 }
 
+export const get_payers_labs = async (hospital_id) => {
+    const response = await api.get(`/get-labs-payers/${hospital_id}`);
+    return response;
+}
+
 export const get_patient_detail = async (mpi) => {
     const response = await api.get(`/patients/${mpi}`);
     return response;

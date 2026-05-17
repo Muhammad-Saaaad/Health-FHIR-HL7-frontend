@@ -1,8 +1,8 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
-import { claim_details, unlock_claim, change_claim_status } from "../api/claims";
+import { claim_details, change_claim_status } from "../api/claims";
 import error_response from "../api/error_response";
 import Sidebar from "../components/sidebar";
 import Heading from "../components/heading";
@@ -14,15 +14,6 @@ export default function CheckClaim() {
     const { claimId } = useParams();
 
     const userid = localStorage.getItem("user_id");
-    const currentValuesRef = useRef({ userid, claimId });
-    const isFirstUnmountRef = useRef(true);
-
-    const { mutateAsync: unlock_claim_mutate } = useMutation({
-        mutationFn: ({ claimId, userId }) => unlock_claim(claimId, userId),
-        onError: (err) => {
-            error_response(err, "Failed to unlock claim");
-        }
-    });
 
     const { mutateAsync: change_claim_status_mutate } = useMutation({
         mutationFn: ({ claimId, status, userId }) => change_claim_status(claimId, status, userId),
@@ -47,23 +38,6 @@ export default function CheckClaim() {
         } 
     }, [userid, navigate]);
 
-    useEffect(() => {
-        return () => {
-            if (!isFirstUnmountRef.current) {
-                const { userid: currentUserId, claimId: currentClaimId } = currentValuesRef.current;
-                if (currentUserId && currentClaimId) {
-                    console.log("Unlocking claim on unmount:", currentClaimId);
-                    unlock_claim(currentClaimId, currentUserId).catch(() => {});
-                }
-            }
-            isFirstUnmountRef.current = false;
-        };
-    }, []);
-
-    useEffect(() => {
-        currentValuesRef.current = { userid, claimId };
-    }, [userid, claimId]);
-
     async function handleStatus(status) {
         const invalidUser = userid === null || userid === "" || userid === "undefined" || userid === "null";
         if (invalidUser) {
@@ -80,7 +54,6 @@ export default function CheckClaim() {
         try {
             await change_claim_status_mutate({ claimId, status, userId: userid });
             console.log(`Claim status changed to ${status} successfully!`);
-            await unlock_claim_mutate({ claimId, userId: userid });
             alert(`Claim ${status} successfully!`);
             navigate(-1); // navigate back to the previous page.
         } catch (err) {

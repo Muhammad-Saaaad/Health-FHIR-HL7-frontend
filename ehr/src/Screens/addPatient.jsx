@@ -3,7 +3,7 @@ import { useMutation, useQuery } from "@tanstack/react-query"
 import { useNavigate } from "react-router-dom"
 
 import error_response from "../api/error_response"
-import { reg_patient } from "../api/patient"
+import { reg_patient, get_payers_labs } from "../api/patient"
 import Heading from "../components/heading"
 import Label from "../components/label"
 import Textbox, { DateTextBox } from "../components/textbox"
@@ -24,6 +24,12 @@ function AddPatient() {
         policy_number: "",
         plan_type: "",
         hospital_id: localStorage.getItem("hospital_id")
+    });
+
+    const { data: payerLabData, isSuccess: payerLabIsSuccess, isError: payerLabIsError, error: payerLabError } = useQuery({
+        queryKey: ["get_payers_labs_for_dropdown", patient.hospital_id],
+        queryFn: () => get_payers_labs(patient.hospital_id),
+        enabled: Boolean(patient.hospital_id)
     });
 
     const handleChange = (field, value) => {
@@ -136,7 +142,7 @@ function AddPatient() {
                     DefaultValueClassName="w-50"
                     OptionsClassNames="w-50"
                     defaultValue={patient.insurance_company || "Select Insurance"}  
-                    options={["Star Insurance", "Jubliee"]}
+                    options={payerLabData?.data}
                     onSelect={(val) => handleChange("insurance_company", val)}
                 />
                 <br /><br />

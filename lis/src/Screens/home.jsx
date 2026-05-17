@@ -10,13 +10,12 @@ import Records from "../components/records";
 
 const Home = () => {
 
-  const {data, isLoading, error} = useQuery({
-    queryKey: ["home_getPatients"],
-    queryFn: get_patients,
-  });
+  const lab_id = localStorage.getItem("lab_id");
 
-  console.log(isLoading);
-  console.log(error);
+  const {data, isLoading, error} = useQuery({
+    queryKey: ["home_getPatients", lab_id],
+    queryFn: () => get_patients(lab_id),
+  });
   
   return (
     <div className="flex overflow-hidden">

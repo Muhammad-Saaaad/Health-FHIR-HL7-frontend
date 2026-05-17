@@ -1,21 +1,28 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 
-import { get_doctors_for_patient } from "../api/doctor"
+import { get_all_hospitals } from "../api/doctor"
 import Textbox from "../components/textbox";
 import Heading, { LowerHeading } from "../components/heading";
 import Sidebar from "../components/sidebar";
-import Records from "../components/records"
+import { Hospitals } from "../components/records"
 
 const Home = () => {
   
   const user = JSON.parse(localStorage.getItem("user"));
 
+  // const { data, isLoading, isError, error, status } = useQuery({
+  //   queryKey: ['phr_all_doctors_by_patient', user?.nic],
+  //   queryFn: () => get_doctors_for_patient(user?.nic),
+  //   enabled: Boolean(user?.nic),
+  //   // retry: false, // Disable automatic retries on failure
+  // });
+
   const { data, isLoading, isError, error, status } = useQuery({
-    queryKey: ['phr_all_doctors_by_patient', user?.mpi],
-    queryFn: () => get_doctors_for_patient(user?.mpi),
-    enabled: Boolean(user?.mpi),
-    // retry: false, // Disable automatic retries on failure
+    queryKey: ['get_all_hospitals'],
+    queryFn: () => get_all_hospitals(),
+    enabled: true,
+    retry: false, // Disable automatic retries on failure
   });
   
   const [records, setRecords] = useState();
@@ -24,10 +31,11 @@ const Home = () => {
   useEffect(() => {
     if(!isLoading && !isError && data){
       setRecords(data?.data);
+      console.log(data);
+      
     }
   }, [data, status])
 
-  console.log(data);
 
   function searchValue(event){
     const value = event.target.value;
@@ -60,18 +68,18 @@ const Home = () => {
 
           <div className="bg-white rounded-t-2xl min-h-screen p-5">
             <Textbox 
-              placeholder="Search Doctors"
+              placeholder="Search Hospitals"
               onChange={searchValue}
             />
             <br /><br />
 
             <div className="relative mb-4">
-                <Heading text="Doctor List" />
+                <Heading text="Hospital List" />
             </div>
 
-            {/* Patient list */}
+            {/* Hospital list */}
             {
-              !isLoading && !isError && <Records data={searchRecords? searchRecords : records}></Records>
+              !isLoading && !isError && <Hospitals data={searchRecords? searchRecords : records}></Hospitals>
             }
             
           </div>

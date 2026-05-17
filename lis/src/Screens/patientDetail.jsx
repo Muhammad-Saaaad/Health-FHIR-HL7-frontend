@@ -12,6 +12,7 @@ export default function PatientDetail() {
     const { state } = useLocation();
     const lab_id = localStorage.getItem("lab_id");
 
+    
     const { data, isLoading, isError } = useQuery({
         queryKey: ["lis_patient_detail", nic, lab_id],
         queryFn: () => get_patient_detail(nic, lab_id),

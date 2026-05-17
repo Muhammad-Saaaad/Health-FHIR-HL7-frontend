@@ -21,6 +21,7 @@ export default function Login() {
         onSuccess: (response)=> {
             localStorage.setItem("doctor_id", response?.data?.users_id);
             localStorage.setItem("hospital_id", response?.data?.hospital_id);
+            localStorage.setItem("doctor", JSON.stringify(response?.data));
             navigate("/home");
         },  
         onError: (error) =>{error_response(error, "Failed to Login")}
@@ -108,6 +109,19 @@ export default function Login() {
                             className="text-blue-500 font-semibold"
                         >
                             Sign up
+                        </button>
+                    </p>
+
+                    {/* <br /> */}
+
+                    <p className="text-center text-sm text-gray-500 mt-1">
+                        Login as Admin?{" "}
+                        <button
+                            type="button"
+                            onClick={() => navigate("/admin-login")}
+                            className="text-blue-500 font-semibold"
+                        >
+                            Click Here
                         </button>
                     </p>
 

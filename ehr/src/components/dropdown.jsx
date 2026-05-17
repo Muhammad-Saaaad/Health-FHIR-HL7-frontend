@@ -56,12 +56,12 @@ export function SearchDropDown({ options, defaultValue, onSelect, DefaultValueCl
     const [open, setOpen] = useState(false);
     const [select, setSelect] = useState(defaultValue); // this tell which value in the dropdown 
 
-    function dropDownValue(value) {
-        console.log("value --> ", value);
+    function dropDownValue(item) {
+        console.log("value --> ", item);
         setOpen(false);
         if (onSelect) {
-            onSelect(value);
-            setSelect(value);
+            onSelect(item?.system_id);
+            setSelect(item?.name || defaultValue);
         }
     }
 
@@ -78,7 +78,7 @@ export function SearchDropDown({ options, defaultValue, onSelect, DefaultValueCl
             {open && ( // add relative here and you will see the dropdown overlab on the below content
                 <div className={twMerge("left-0 border border-gray-300 rounded-2xl shadow-lg overflow-hidden", OptionsClassNames)}>
                     {
-                        options.map((item, index) => {
+                        options?.payers?.map((item, index) => {
                             let style = "text-center py-2 w-full h-10 active:bg-gray-600";
                             if (index % 2 == 0) {
                                 style += " bg-[#7A7979] text-[#152F5B] font-bold hover:bg-gray-600 "
@@ -91,7 +91,7 @@ export function SearchDropDown({ options, defaultValue, onSelect, DefaultValueCl
                                 onClick={() => dropDownValue(item)}  // execute function, call the function with the item
                                 className={style}
                             >
-                                {item}
+                                {item?.name}
                             </div>
                         })
                     }

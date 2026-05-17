@@ -4,6 +4,11 @@ import Home from './Screens/home.jsx';
 import AddPatient from './Screens/addPatient.jsx';
 import Signup from './Screens/signup.jsx';
 import Login from './Screens/login.jsx';
+
+import AdminLogin from './Screens/adminLogin.jsx';
+import AdminPanel from './Screens/adminPanel.jsx';
+import ShowHospitals from './Screens/showHospitals.jsx';
+
 import AddVisitNote from './Screens/AddVisitNote.jsx';
 import ViewPatient from './Screens/viewPatient.jsx';
 import ViewNote from './Screens/viewNote.jsx'
@@ -19,6 +24,10 @@ function App() {
           <Route path='/' element={<Navigate to='/login' replace />} />
           <Route path='/signup' element={<Signup />} />
           <Route path='/login' element={<Login />} />
+          <Route path='/admin-login' element={<AdminLogin />} />
+
+          <Route path='/admin-panel' element={<AdminPanel />} />
+          <Route path='/hospitals' element={<ShowHospitals />} />
           
           <Route path='/home' element={<Home />} />
           <Route path='/ehr/add-patient' element={<AddPatient />} />

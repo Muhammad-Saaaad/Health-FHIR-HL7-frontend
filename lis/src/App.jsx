@@ -3,11 +3,15 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import Home from './Screens/home.jsx';
 import SignUp from './Screens/signup.jsx';
 import Login from './Screens/login.jsx';
+import AdminLogin from './Screens/adminLogin.jsx';
+import AdminPanel from './Screens/adminPanel.jsx';
+import ShowLabs from './Screens/showLabs.jsx';
+
 import PatientDetail from './Screens/patientDetail.jsx';
 import PendingList from './Screens/pendingList.jsx';
 import PendingTestDetail from './Screens/pendingTestDetail.jsx';
 import AcceptedTests from './Screens/acceptedTests.jsx';
-import LabResult from './Screens/labResult.jsx';
+import AddLabResult from './Screens/AddLabResult.jsx';
 import ViewReport from './Screens/viewReport.jsx';
 
 function App() {
@@ -23,12 +27,16 @@ function App() {
           <Route path='/pending-test/:nic/:vid' element={<PendingTestDetail />} />
           <Route path='/records' element={<Home />} />
           <Route path='/record' element={<Navigate to="/records" replace />} />
-          <Route path='/lab-result/:testReqId' element={<LabResult />} />
+          <Route path='/add-lab-result' element={<AddLabResult />} />
           <Route path='/view-report/:reportId' element={<ViewReport />} />
           <Route path='/view-report' element={<ViewReport />} />
           <Route path='/patient/:nic' element={<PatientDetail />} />
+          
           <Route path='/signup' element={<SignUp />} />
           <Route path='/login' element={<Login />} />
+          <Route path='/admin-login' element={<AdminLogin />} />
+          <Route path='/admin-panel' element={<AdminPanel />} />
+          <Route path='/show-labs' element={<ShowLabs />} />
         </Routes>
       </Router>
     </>

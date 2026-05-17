@@ -8,9 +8,12 @@ import { CustomDropDown } from "../components/dropdown"
 import Records from "../components/records";
 
 export default function PendingClaims() {
+
+  const insurance_id = localStorage.getItem("insurance_id");
+
   const { data, isLoading, isError, error, status } = useQuery({
-    queryKey: ["get_all_pending_claims"],
-    queryFn: pending_claims_patients,
+    queryKey: ["get_all_pending_claims", insurance_id],
+    queryFn: () => pending_claims_patients(insurance_id),
   });  
 
   return (
@@ -24,7 +27,7 @@ export default function PendingClaims() {
             <Textbox placeholder="Search"></Textbox>
           </div>
           <div className="col-start-3 flex justify-end items-center">
-            <CustomDropDown options={["Name", "MPI"]} defaultValue="Select by" onSelect={(value) => console.log(value)} />
+            <CustomDropDown options={["Name", "NIC"]} defaultValue="Select by" onSelect={(value) => console.log(value)} />
           </div>
         </div>
 

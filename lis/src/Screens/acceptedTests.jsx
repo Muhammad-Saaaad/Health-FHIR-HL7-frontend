@@ -10,10 +10,11 @@ import { CustomDropDown } from "../components/dropdown";
 export default function AcceptedTests() {
     const navigate = useNavigate();
     const userId = localStorage.getItem("user_id");
+    const labId = localStorage.getItem("lab_id");
 
     const { data, isLoading, error } = useQuery({
-        queryKey: ["lis_patient_accepted_list"],
-        queryFn: get_patient_accepted_list,
+        queryKey: ["lis_patient_accepted_list", labId],
+        queryFn: () => get_patient_accepted_list(labId),
     });
 
     const handleOpen = (item) => {
@@ -23,7 +24,7 @@ export default function AcceptedTests() {
         }
 
         // Locking disabled; open the test directly.
-        navigate(`/lab-result/${item?.test_req_id}`, {
+        navigate(`/add-lab-result`, {
             state: {
                 test_req_id: item?.test_req_id,
                 nic: item?.nic,

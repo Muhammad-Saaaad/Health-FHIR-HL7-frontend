@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { FileText, Phone, Info, LogOut, User } from "lucide-react";
@@ -10,83 +9,38 @@ const FIELD_CONFIG = [
     {
         key: "specialization",
         title: "Specialization",
-        editLabel: "+ Edit Specialization",
         icon: FileText,
-        placeholder: "Medical Specialist",
-        maxLength: 50,
     },
     {
         key: "phone_no",
         title: "Phone No",
-        editLabel: "+ Edit Phone No",
         icon: Phone,
-        placeholder: "+92-320-5996162",
-        maxLength: 15,
     },
     {
         key: "about",
         title: "About",
-        editLabel: "+ Edit About",
         icon: Info,
-        placeholder: "I am a medical specialist dedicated to diagnosing and treating patients with high-quality, evidence-based care.",
-        maxLength: 60,
     },
 ];
 
-function getInitialDraft(doctor) {
-    return {
-        specialization: doctor?.specialization ?? doctor?.speciality ?? doctor?.specialty ?? "Medical Specialist",
-        phone_no: doctor?.phone_no ?? doctor?.phone ?? "+92-320-5996162",
-        about: doctor?.about ?? doctor?.bio ?? "I am a medical specialist dedicated to diagnosing and treating patients with high-quality, evidence-based care.",
-    };
-}
 
 export default function Profile() {
     const navigate = useNavigate();
     const doctorId = localStorage.getItem("doctor_id");
+    const doctor = JSON.parse(localStorage.getItem("doctor"));
 
-    const { data, isLoading, isError } = useQuery({
-        queryKey: ["ehr_doctor_profile", doctorId],
-        queryFn: () => get_doctor(doctorId),
-        enabled: Boolean(doctorId),
-    });
 
-    const doctor = data?.data;
-    const doctorName = doctor?.doc_name ?? doctor?.name ?? doctor?.doctor_name ?? doctor?.fname ?? "Dr.Sana";
-
-    const [draft, setDraft] = useState(() => getInitialDraft(null));
-    const [savedProfile, setSavedProfile] = useState(() => getInitialDraft(null));
-    const [editing, setEditing] = useState({
-        specialization: false,
-        phone_no: false,
-        about: false,
-    });
-
-    useEffect(() => {
-        const initialProfile = getInitialDraft(doctor);
-        setDraft(initialProfile);
-        setSavedProfile(initialProfile);
-        setEditing({ specialization: false, phone_no: false, about: false });
-    }, [doctor]);
-
-    const notificationCount = 2;
-
-    const handleEdit = (fieldKey) => {
-        setEditing((prev) => ({ ...prev, [fieldKey]: true }));
-    };
-
-    const handleCancel = (fieldKey) => {
-        setDraft((prev) => ({ ...prev, [fieldKey]: savedProfile[fieldKey] }));
-        setEditing((prev) => ({ ...prev, [fieldKey]: false }));
-    };
-
-    const handleSave = (fieldKey) => {
-        setSavedProfile((prev) => ({ ...prev, [fieldKey]: draft[fieldKey] }));
-        setEditing((prev) => ({ ...prev, [fieldKey]: false }));
+    const doctorName = doctor?.name ?? "";
+    const profile = {
+        specialization: doctor?.specialization ?? "No Specialization",
+        phone_no: doctor?.phone_no ?? "No Number",
+        about: doctor?.about ?? "No information available",
     };
 
     const handleLogout = () => {
         localStorage.removeItem("doctor_id");
+        localStorage.removeItem("doctor");
+        localStorage.removeItem("hospital_id");
         navigate("/login");
     };
 
@@ -120,13 +74,13 @@ export default function Profile() {
                         <div className="h-24 w-24 flex items-center justify-center rounded-full border-4 border-white shadow-md bg-[#E9F1FF] text-[#2F6BFF]">
                             <User className="h-12 w-12" />
                         </div>
-                        <p className="mt-4 text-lg font-semibold text-[#152F5B]">{doctorName}</p>
+                        <p className="mt-4 text-lg font-semibold text-[#152F5B]">{doctorName || "—"}</p>
                     </div>
 
                     <div className="mt-8 w-full space-y-8 md:mt-10">
                         {FIELD_CONFIG.map((field) => {
                             const Icon = field.icon;
-                            const isEditing = editing[field.key];
+                            const value = profile[field.key] || "—";
 
                             return (
                                 <section key={field.key} className="border-b border-[#EDF1F7] pb-6 last:border-b-0">
@@ -137,49 +91,10 @@ export default function Profile() {
                                             </div>
                                             <h2 className="text-base font-semibold text-[#1F2937] sm:text-lg">{field.title}</h2>
                                         </div>
-
-                                        <button
-                                            type="button"
-                                            onClick={() => handleEdit(field.key)}
-                                            className="text-xs font-semibold text-[#31486F] sm:text-sm"
-                                        >
-                                            {field.editLabel}
-                                        </button>
                                     </div>
 
-                                    <input
-                                        type="text"
-                                        maxLength={field.maxLength}
-                                        value={draft[field.key]}
-                                        onChange={(e) => setDraft((prev) => ({ ...prev, [field.key]: e.target.value }))}
-                                        disabled={!isEditing}
-                                        placeholder={field.placeholder}
-                                        className={`w-full rounded-2xl border px-4 py-3 text-sm outline-none transition-colors ${
-                                            isEditing
-                                                ? "border-[#D6DCE8] bg-white text-[#152F5B]"
-                                                : "border-[#E5EAF2] bg-[#FAFBFD] text-[#9AA3B2]"
-                                        }`}
-                                    />
-
-                                    <div className="mt-2 text-right text-[11px] text-[#A1A1A1] sm:text-xs">
-                                        {draft[field.key].length}/{field.maxLength} Characters
-                                    </div>
-
-                                    <div className="mt-1 flex justify-end gap-2">
-                                        <button
-                                            type="button"
-                                            onClick={() => handleCancel(field.key)}
-                                            className="rounded-lg bg-[#E5E7EB] px-3 py-1.5 text-xs font-semibold text-[#7A7979] shadow-sm transition-colors hover:bg-[#D1D5DB]"
-                                        >
-                                            Cancel
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => handleSave(field.key)}
-                                            className="rounded-lg bg-[#31486F] px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-[#243855]"
-                                        >
-                                            Save
-                                        </button>
+                                    <div className="w-full rounded-2xl border border-[#E5EAF2] bg-[#FAFBFD] px-4 py-3 text-sm text-[#9AA3B2]">
+                                        {value}
                                     </div>
                                 </section>
                             );

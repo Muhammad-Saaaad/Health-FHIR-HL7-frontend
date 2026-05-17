@@ -4,6 +4,7 @@ import Login from './screens/Login';
 import SignUp from './screens/SignUp';
 import Home from './screens/Home';
 import ViewDoctorDetails from './screens/viewDoctorDetails';
+import ViewDoctors from './screens/view_doctors';
 import ViewNote from './screens/viewNote';
 import ViewReport from './screens/viewReport';
 import Profile from './screens/profile';
@@ -17,6 +18,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/view-doctors" element={<ViewDoctors />} />
         <Route path="/view-doctor-details" element={<ViewDoctorDetails />} />
         <Route path="/view-note" element={<ViewNote />} />
         <Route path="/view-report" element={<ViewReport />} />

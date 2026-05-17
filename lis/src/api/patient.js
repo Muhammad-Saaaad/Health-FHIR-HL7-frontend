@@ -9,8 +9,8 @@ export async function get_patient_detail(nic, lab_id) {
     return response;
 }
 
-export async function get_patient_process(nic, vid) {
-    const response = await api.get(`/patient-process/${nic}/${vid}`);
+export async function get_patient_process(nic, vid, lab_id) {
+    const response = await api.get(`/patient-process/${nic}/${vid}?lab_id=${lab_id}`);
     return response;
 }
 

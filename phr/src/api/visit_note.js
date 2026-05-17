@@ -4,8 +4,8 @@ const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
 })
 
-export const visit_note_by_doctor_per_patient = async (mpi, doctor_id) => {
-    const response = await api.get(`/doctor-visit-notes/${mpi}/${doctor_id}`);
+export const visit_note_by_doctor_per_patient = async (nic, doctor_id) => {
+    const response = await api.get(`/doctor-visit-notes/${nic}/${doctor_id}`);
     return response.data;
 }
 

@@ -6,8 +6,8 @@ const api = axios.create({
 
 // const header = { "content-Type": "application/json" }
 
-export async function get_patients() {
-    const response = await api.get("/get_all_patients");
+export async function get_patients(insurance_id) {
+    const response = await api.get(`/get_all_patients/${insurance_id}`);
     return response;
 }
 
@@ -16,8 +16,8 @@ export async function get_patient_by_id(patient_id) {
     return response.data;
 }
 
-export async function reg_patients(data) {
-    const response = await api.post("/reg_patient", data);
+export async function reg_patients(data, insurance_id) {
+    const response = await api.post(`/reg_patient/${insurance_id}`, data);
     return response;
 }
 

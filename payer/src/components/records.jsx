@@ -1,16 +1,13 @@
-import { useState, useEffect } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
-import { lock_claim } from "../api/claims";
 import { twMerge } from "tailwind-merge";
 import { expense_breakdown } from "../api/patient";
 
 export default function Records({data}) {
   
   const navigate = useNavigate();
-
-  const [selected_claim_id, setSelectedClaimID] = useState(0);
 
   const userid = localStorage.getItem("user_id");
   useEffect(() => {
@@ -23,10 +20,6 @@ export default function Records({data}) {
     } 
   }, [userid, navigate])
 
-  const { mutateAsync: lockClaim, isPending: lock_is_loading } = useMutation({
-    mutationFn: ({ claim_id, user_id }) => lock_claim(claim_id, user_id),
-  });
-
   async function handleClaimClick(claim_id) {
     const invalidUser = userid === null || userid === "" || userid === "undefined" || userid === "null";
     if (invalidUser) {
@@ -35,22 +28,7 @@ export default function Records({data}) {
       navigate("/login");
       return;
     }
-
-    if (lock_is_loading) {
-      console.log("Locking in progress somehow. There might be a delay in setting the loading state. Please wait.");
-      return;
-    }
-
-    setSelectedClaimID(claim_id);
-
-    try {
-      await lockClaim({ claim_id, user_id: userid });
-      console.log(`Claim ${claim_id} locked successfully by user ${userid}`);
-      navigate(`/claim/${claim_id}`);
-    }
-    catch {
-      alert("Claim is currently being checked by another user. Please try again later.");
-    }
+    navigate(`/claim/${claim_id}`);
   }
 
   return(
@@ -59,7 +37,7 @@ export default function Records({data}) {
         data?.map((item, index) => ( // every column will have its own grid
           <div 
             key={index} 
-            className={`border-2 border-[#828181] rounded-2xl col-span-12 sm:col-span-6 lg:col-span-4 grid grid-cols-12 my-1 sm:my-3 ${lock_is_loading && selected_claim_id === item.claim_id ? "opacity-70 cursor-wait" : ""}`}
+            className="border-2 border-[#828181] rounded-2xl col-span-12 sm:col-span-6 lg:col-span-4 grid grid-cols-12 my-1 sm:my-3"
             onClick={() => handleClaimClick(item.claim_id)}
           >
               <div className="col-span-11" >
@@ -69,7 +47,7 @@ export default function Records({data}) {
                   </div>
                   <div>
                     <p className="font-bold text-[#152F5B]">{item.name}</p>
-                    <p className="font-bold opacity-60">MPI: {item.mpi}</p>
+                    <p className="font-bold opacity-60">NIC: {item.nic}</p>
                     <p className="opacity-40">{item.created_at}</p>
                     <p className="opacity-60 font-bold">Claim_number: {item.claim_id }</p>
                   </div>
@@ -110,7 +88,7 @@ export function HomeRecords({data}) {
                   </div>
                   <div>
                     <p className="font-bold text-[#152F5B]">{item.name}</p>
-                    <p className="font-bold opacity-60">MPI: {item.mpi}</p>
+                    <p className="font-bold opacity-60">NIC: {item.nic}</p>
                     <p className="opacity-40">{item.date_of_birth}</p>
                     <p className="opacity-60 font-bold">policy_number: {item.policy_number}</p> 
                   </div>

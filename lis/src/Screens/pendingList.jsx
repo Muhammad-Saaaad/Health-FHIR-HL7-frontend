@@ -7,12 +7,14 @@ import Heading from "../components/heading";
 import Textbox from "../components/textbox";
 import { CustomDropDown } from "../components/dropdown";
 
-export default function PendingList() {
+export default function PendingList() { // 1st home screen for lis
     const navigate = useNavigate();
     const userId = localStorage.getItem("user_id");
+    const labId = localStorage.getItem("lab_id");
+
     const { data, isLoading, error } = useQuery({
-        queryKey: ["lis_patient_waiting_list"],
-        queryFn: get_patient_waiting_list,
+        queryKey: ["lis_patient_waiting_list", labId],
+        queryFn: () => get_patient_waiting_list(labId),
     });
 
     const handleOpen = (item) => {

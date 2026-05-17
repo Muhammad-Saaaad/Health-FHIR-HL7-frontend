@@ -9,9 +9,11 @@ import { HomeRecords } from "../components/records";
 
 const Home = () => {
 
+  const insurance_id = localStorage.getItem("insurance_id");
+
   const { data, isLoading, isError, error, status } = useQuery({
     queryKey: ["payer_getPatients"],
-    queryFn: get_patients,
+    queryFn: () => get_patients(insurance_id),
   });
 
   return (
@@ -25,7 +27,7 @@ const Home = () => {
             <Textbox placeholder="Search"></Textbox>
           </div>
           <div className="col-start-3 flex justify-end items-center">
-            <CustomDropDown options={["Name", "MPI"]} defaultValue="Select by" onSelect={(value) => console.log(value)} />
+            <CustomDropDown options={["Name", "NIC"]} defaultValue="Select by" onSelect={(value) => console.log(value)} />
           </div>
         </div>
 

@@ -28,8 +28,11 @@ export default function AddCustomer() {
         setForm(prev => ({ ...prev, [field]: value }));
     };
 
+    const insuranceId = localStorage.getItem("insurance_id");
+    const userId = localStorage.getItem("user_id");
+
     const { mutate, isPending} = useMutation({
-        mutationFn: reg_patients,
+        mutationFn: (form) => reg_patients(form, insuranceId),
         onSuccess: () => {
             alert(`Customer registered successfully!`);
             navigator("/home");
@@ -44,7 +47,7 @@ export default function AddCustomer() {
             phone_no: form.phone,
             gender: form.gender,
             date_of_birth: form.dob,
-            user_id: 1,
+            user_id: userId,
             insurance_type: form.plan_type,
         }
         mutate(input_data);

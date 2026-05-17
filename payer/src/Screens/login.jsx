@@ -1,16 +1,18 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, Building } from "lucide-react";
 
-import { login } from "../api/user";
-import { useMutation } from "@tanstack/react-query";
+import { login, get_all_insurances } from "../api/user";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import error_response from "../api/error_response";
+import { InsuranceDropDown } from "../components/dropdown";
 
 export default function Login() {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPass, setShowPass] = useState(false);
+    const [insuranceId, setInsuranceId] = useState("");
 
     const navigate = useNavigate();
 
@@ -19,17 +21,24 @@ export default function Login() {
         onSuccess: (res)=> {
             navigate("/home");
             localStorage.setItem("user_id", res?.data?.user_id);
+            localStorage.setItem("insurance_id", res?.data?.insurance_id);
         },
         onError: (error) =>{error_response(error, "Failed to Login")}
     });
+
+    const { data: insurances } = useQuery({
+        queryKey: ['all-insurances'],
+        queryFn: get_all_insurances
+    })
 
     const handleSubmit = (e) => {
         e.preventDefault();
         mutate({
             email: email,
-            password: password
+            password: password,
+            insurance_id: insuranceId
         });
-        console.log({ email, password });
+        console.log({ email, password, insurance_id: insuranceId });
     };
 
     return (
@@ -69,6 +78,19 @@ export default function Login() {
                         </button>
                     </div>
 
+                    {/* Insurance */}
+                    <div className="flex items-center gap-3 border-2 border-[#E8F3F1] rounded-2xl px-4 ">
+                        <Building size={18} className="text-gray-400 shrink-0" />
+                        <div className="flex-1">
+                            <InsuranceDropDown
+                                options={insurances}
+                                defaultValue={"Select Insurance"}
+                                onSelect={(selectedInsurance) => setInsuranceId(selectedInsurance)}
+                                required
+                            />
+                        </div>
+                    </div>
+
                     <div className="mt-6">
                         <button
                             type="submit"
@@ -88,7 +110,6 @@ export default function Login() {
                             Sign up
                         </button>
                     </p>
-
                 </form>
             </div>
         </div>

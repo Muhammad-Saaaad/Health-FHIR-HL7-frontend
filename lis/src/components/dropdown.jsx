@@ -81,3 +81,28 @@ export default function DropDown(props){
 
     </select>
 }
+
+export const LabDropDown = (props) => {
+    // This onSelect is a function that is given from the parent to this compoenent
+    let {options, defaultValue, onSelect} = props;
+
+    function changeValue(event){
+        const value = event.target.value;
+        if (onSelect){
+            onSelect(value);
+        }
+    }
+    
+    return <select 
+        className="w-full h-12 p-2 pr-8"
+        onChange={changeValue}
+        defaultValue={defaultValue}
+    >
+        <option value="">{defaultValue}</option>
+
+        {options?.map((element, index) => (
+            <option key={index} value={element.lab_id}>{element.name}</option>
+        ))}
+
+    </select>
+}

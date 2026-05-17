@@ -23,11 +23,6 @@ export default function Records({data}){
                     </div>
                     <div>
                       <p className="font-bold text-[#152F5B]">{item.name}</p>
-                      <p className="font-bold opacity-60">
-                        phone_no: {item?.phone_no == null || String(item?.phone_no).toLowerCase() === "none" ? "" : item?.phone_no}
-                      </p>
-                      <p className="opacity-40">last visit: {item.last_visit.split("T")[0]}</p>
-                      <p className="opacity-60 font-bold">speclization: {item.specialization}</p>
                     </div>
                   </div>
                 </div>
@@ -45,14 +40,52 @@ export default function Records({data}){
     )
 }
 
-export function Notes({mpi, doctor_id}){
+export function Hospitals({data}){
+    const navigate = useNavigate();
+
+    return(
+        <div className="grid grid-cols-12 mt-5 gap-x-5">
+        { // the ? is use as a if statement, here it is making sure if that data is available or not.
+          data?.map((item, index) => ( // every column will have its own grid
+            <div 
+              key={index} 
+              className="border-2 border-[#828181] rounded-2xl col-span-12 sm:col-span-6 lg:col-span-4 grid grid-cols-12 my-1 sm:my-3 "
+              onClick={() => navigate('/view-doctors', { state: { hospital_id: item?.hospital_id } })} // this is how we can pass data to another page using react router dom.
+            >
+                <div className="col-span-11" >
+                  <div className="flex space-x-5 items-center">
+                    <div>
+                      <img src="/icons/Profile_pic.png" alt="profile" className="w-17 h-17"/>
+                    </div>
+                    <div>
+                      <p className="font-bold text-[#152F5B]">{item.name}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-start items-center col-span-1">
+                  <button type="button">
+                    <img src="/icons/go_arrow.png" alt=">" className="h-5 w-3" />
+                  </button>
+                </div> 
+             </div>           
+          ))
+        }
+
+      </div>
+    )
+}
+
+export function Notes({nic, doctor_id}){
 
   const navigate = useNavigate();
 
+  console.log(nic, doctor_id);
+
   const { data: visitNotes = [], isLoading, isError } = useQuery({
-    queryKey: ['visit_notes', mpi, doctor_id],
-    queryFn: () => visit_note_by_doctor_per_patient(mpi, doctor_id),  
-    enabled: Boolean(mpi && (doctor_id != undefined || doctor_id != null)) // only trigger when there is an mpi and doctor_id available
+    queryKey: ['visit_notes', nic, doctor_id],
+    queryFn: () => visit_note_by_doctor_per_patient(nic, doctor_id),  
+    enabled: Boolean(nic && (doctor_id != undefined || doctor_id != null)) // only trigger when there is an nic and doctor_id available
   });
 
   if (isLoading) {

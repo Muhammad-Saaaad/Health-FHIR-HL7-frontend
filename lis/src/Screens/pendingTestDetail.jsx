@@ -8,7 +8,7 @@ import Heading from "../components/heading";
 import { get_patient_process, update_report_status } from "../api/patient";
 import error_response from "../api/error_response";
 
-export default function PendingTestDetail() {
+export default function PendingTestDetail() { // 2nd home screen for lis 
     const navigate = useNavigate();
     const { nic, vid } = useParams();
     const { state } = useLocation();
@@ -16,12 +16,13 @@ export default function PendingTestDetail() {
     const [testStatuses, setTestStatuses] = useState({});
     const [testBills, setTestBills] = useState({});
     const userId = localStorage.getItem("user_id");
+    const lab_id = localStorage.getItem("lab_id");
 
     // Fetch patient process data with pending tests
     const { data, isLoading, isError } = useQuery({
-        queryKey: ["lis_pending_test_detail", nic, vid],
-        queryFn: () => get_patient_process(nic, vid),
-        enabled: Boolean(nic && vid),
+        queryKey: ["lis_pending_test_detail", nic, vid, lab_id],
+        queryFn: () => get_patient_process(nic, vid, lab_id),
+        enabled: Boolean(nic && vid && lab_id),
     });
 
     const patient = data?.data;

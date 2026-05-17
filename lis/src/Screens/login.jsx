@@ -1,16 +1,18 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, Building } from "lucide-react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
-import { login } from "../api/user";
-import { useMutation } from "@tanstack/react-query";
+import { login, get_all_labs } from "../api/user";
 import error_response from "../api/error_response";
+import { LabDropDown } from "../components/dropdown";
 
 export default function Login() {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPass, setShowPass] = useState(false);
+    const [lab, setLab] = useState("");
 
     const navigate = useNavigate();
 
@@ -19,8 +21,8 @@ export default function Login() {
         onSuccess: (response)=> {
             const user = response?.data;
             if (user?.user_id !== undefined && user?.user_id !== null) {
-                localStorage.setItem("user_id", String(user.user_id));
-                localStorage.setItem("lab_id", String(user.lab_id));
+                localStorage.setItem("user_id", String(user?.user_id));
+                localStorage.setItem("lab_id", String(user?.lab_id));
             }
             alert("Login Sucessfull");
             navigate("/home");
@@ -28,13 +30,19 @@ export default function Login() {
         onError: (error) =>{error_response(error, "Failed to Login")}
     });
 
+    const { data: labs } = useQuery({
+        queryKey: ['all-labs'],
+        queryFn: get_all_labs
+    })
+
     const handleSubmit = (e) => {
         e.preventDefault();
         mutate({
             email: email,
-            password: password
+            password: password,
+            lab_id: lab
         });
-        console.log({ email, password });
+        console.log({ email, password, lab });
     };
 
     return (
@@ -74,6 +82,19 @@ export default function Login() {
                         </button>
                     </div>
 
+                    {/* lab */}
+                    <div className="flex items-center gap-3 border-2 border-[#E8F3F1] rounded-2xl px-4 ">
+                        <Building size={18} className="text-gray-400 shrink-0" />
+                        <div className="flex-1">
+                            <LabDropDown
+                                options={labs}
+                                defaultValue={"Select Lab"}
+                                onSelect={(selectedLab) => setLab(selectedLab)}
+                                required
+                            />
+                        </div>
+                    </div>
+
                     <div className="mt-6">
                         <button
                             type="submit"
@@ -91,6 +112,17 @@ export default function Login() {
                             className="text-blue-500 font-semibold"
                         >
                             Sign up
+                        </button>
+                    </p>
+
+                    <p className="text-center text-sm text-gray-500 mt-1">
+                        Login as Admin?{" "}
+                        <button
+                            type="button"
+                            onClick={() => navigate("/admin-login")}
+                            className="text-blue-500 font-semibold"
+                        >
+                            Click Here
                         </button>
                     </p>
 

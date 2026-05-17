@@ -16,7 +16,7 @@ export default function Sidebar() {
 
     const menuItems = [
         { icon: Home, label: 'Home', path: '/home', activePaths: ['/home', '/pending-list', '/pending-test/'] },
-        { icon: FlaskConical, label: 'Lab Test', path: '/lab-test', activePaths: ['/lab-test', '/lab-result/'] },
+        { icon: FlaskConical, label: 'Lab Test', path: '/lab-test', activePaths: ['/lab-test', '/lab-result/', '/add-lab-result'] },
         { icon: Ruler, label: 'Record', path: '/records', activePaths: ['/records', '/patient/', '/view-report/'] },
     ];
 

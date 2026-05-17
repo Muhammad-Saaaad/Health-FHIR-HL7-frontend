@@ -13,3 +13,8 @@ export const login = async (payload) => {
     const response = await api.post("/login", payload);
     return response;
 };
+
+export const get_all_insurances = async () => {
+    const response = await api.get("/all-insurances");
+    return response.data;
+}
